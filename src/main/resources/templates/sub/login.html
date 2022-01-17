@@ -1,0 +1,48 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
+
+<th:block layout:fragment="layout-content">
+    <div class="wrap2">
+        <div class="header white">
+            <div class="hd-in">
+                <span class="title">FOR FOREIGN WORKERS!</span>
+            </div>
+        </div>
+        <div class="board-wrap clearfix">
+            <div class="social-login-wrap">
+                <button type="button" class="facebookbtn"><i class="fb-i"></i>Log In With Facebook</button>
+                <button type="button" class="googlebtn"><i class="gg-i"></i>Log In With Google</button>
+                <button type="button" class="applebtn"><i class="ap-i"></i>Log In With  Apple</button>
+            </div>
+            <div class="orbox">
+                <div class="or">OR</div>
+            </div>
+            <div class="anonymous-wrap">
+                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">
+                    <div></div>
+                </div>
+                <input type="text" id="nickname" name="nickname" placeholder="Nickname">
+                <button type="button" class="btn">Anonymous login</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setThumbnail(event) { 
+            var reader = new FileReader(); 
+            reader.onload = function(event) { 
+                document.getElementById("profilewrap").innerHTML ="";
+                var img = document.createElement("div"); 
+                img.setAttribute("style", "background-image:url("+event.target.result+")"); 
+                img.setAttribute("ID", "profileimg"); 
+                document.querySelector("div#profilewrap").appendChild(img); 
+            }; 
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        function profileupload(){
+            var ele=document.getElementById('image');
+            ele.click();
+            console.log('test');
+        }
+    </script>
+</th:block>

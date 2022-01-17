@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR FOREIGN WORKERS!</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="../assets/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="../assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-lite.min.js"></script>
+    <script src="../assets/plugin/summernote-file-master/summernote-file.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="wrap2">
+        <div class="header white big">
+            <div class="hd-in">
+                <a href="" class="back back-btn"></a>
+                <button class="btn">Submit</button>
+            </div>
+        </div>
+        <div class="board-wrap write">
+            <input type="text" class="note-title" placeholder="Title">
+            <textarea id="summernote"></textarea>
+        </div>
+    </div>
+    <script>
+        //summernote
+       $(document).ready(function (){
+            $('#summernote').summernote({
+                tabsize: 2,
+                lang: 'ko-KR', // default: 'en-US'
+                toolbar: [
+                    ['insert', ['picture']],
+                    ['style', ['bold', 'forecolor', 'fontsize']],
+                    ['insert', ['link', 'file']]
+                ],
+                spellCheck: false,
+                placeholder: 'Type...',
+                disableDragAndDrop: true,
+                disableResizeEditor: true,
+                icons: {
+                    picture: 'i-img',
+                    bold: 'i-bold',
+                    link: 'i-link',
+                    file: 'i-file'
+                },
+                callbacks: {
+                    onFileUpload: function(file) {
+                        myOwnCallBack(file[0]);
+                    },
+                },
+            });
+        });
+        function myOwnCallBack(file) {
+            let data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                data: data,
+                type: "POST",
+                url: "file-uploader.php", //Your own back-end uploader
+                cache: false,
+                contentType: false,
+                processData: false,
+                xhr: function() { //Handle progress upload
+                    let myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                    return myXhr;
+                },
+                success: function(reponse) {
+                    if(reponse.status === true) {
+                        let listMimeImg = ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg'];
+                        let listMimeAudio = ['audio/mpeg', 'audio/ogg'];
+                        let listMimeVideo = ['video/mpeg', 'video/mp4', 'video/webm'];
+                        let elem;
+
+                        if (listMimeImg.indexOf(file.type) > -1) {
+                            //Picture
+                            $('.summernote').summernote('editor.insertImage', reponse.filename);
+                        } else if (listMimeAudio.indexOf(file.type) > -1) {
+                            //Audio
+                            elem = document.createElement("audio");
+                            elem.setAttribute("src", reponse.filename);
+                            elem.setAttribute("controls", "controls");
+                            elem.setAttribute("preload", "metadata");
+                            $('.summernote').summernote('editor.insertNode', elem);
+                        } else if (listMimeVideo.indexOf(file.type) > -1) {
+                            //Video
+                            elem = document.createElement("video");
+                            elem.setAttribute("src", reponse.filename);
+                            elem.setAttribute("controls", "controls");
+                            elem.setAttribute("preload", "metadata");
+                            $('.summernote').summernote('editor.insertNode', elem);
+                        } else {
+                            //Other file type
+                            elem = document.createElement("a");
+                            let linkText = document.createTextNode(file.name);
+                            elem.appendChild(linkText);
+                            elem.title = file.name;
+                            elem.href = reponse.filename;
+                            $('.summernote').summernote('editor.insertNode', elem);
+                        }
+                    }
+                }
+            });
+        }
+
+        function progressHandlingFunction(e) {
+            if (e.lengthComputable) {
+                //Log current progress
+                console.log((e.loaded / e.total * 100) + '%');
+
+                //Reset progress on complete
+                if (e.loaded === e.total) {
+                    console.log("Upload finished.");
+                }
+            }
+        }
+        $(function(){
+            $('#all-chk').click(function(){
+                var chk = $(this).is(':checked');
+                if(chk) $('.file-up-con input').prop('checked',true);
+                else $('.file-up-con input').prop('checked',false);
+            });
+        });
+        $('.ch-remove').click(function(){
+            if(confirm("삭제하시겠습니까?")){
+                $(".file-up-con input[type=checkbox]:checked").each(function(){
+                    var tr_value =$(this).val();
+                    var tr=$("li[file-value='"+tr_value+"']");
+                    tr.remove();
+                });
+            }else{
+                return false;
+            }
+        });
+        
+    </script>
+</body>
+</html>
