@@ -31,7 +31,7 @@
                             </div>
                             <div class="comment-btn-box">
                                 <button type="button" class="modify-btn"></button>
-                                <button type="button" class="del-btn" onclick="modalopen();"></button>
+                                <button type="button" class="del-btn" onclick="modal.open('#deleteModal');"></button>
                             </div>
                         </div>
                     </div>
@@ -128,12 +128,12 @@
                </div>
            </div>
         </div>
-        <div class="modal-wrap">
+        <div class="modal-wrap" id="deleteModal">
             <div class="modal-body">
-                <button class="mod-close" onclick="modalclose();"></button>
+                <button class="mod-close" onclick="modal.close('#deleteModal');"></button>
                 <p>Do you really want to remove this post?</p>
                 <div class="btnbox clearfix">
-                    <button type="button" class="cancelbtn" onclick="modalclose();">Cancel</button>
+                    <button type="button" class="cancelbtn" onclick="modal.close('#deleteModal');">Cancel</button>
                     <button type="button" class="delbtn">Delete</button>
                 </div>
             </div>
@@ -179,11 +179,5 @@
             reply.text(modiT);
             $(this).parent('.re-modify').remove();
         });
-        function modalopen(){
-            $('.modal-wrap').addClass('on');
-        }
-        function modalclose(){
-            $('.modal-wrap').removeClass('on');
-        }
     </script>
 </th:block>

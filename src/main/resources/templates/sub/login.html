@@ -18,16 +18,28 @@
                 <div class="or">OR</div>
             </div>
             <div class="anonymous-wrap">
-                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">
+<!--                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">-->
+                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap">
                     <div></div>
                 </div>
                 <input type="text" id="nickname" name="nickname" placeholder="Nickname">
-                <button type="button" class="btn">Anonymous login</button>
+                <button type="button" class="btn" onclick="anonymousLogin()">Anonymous login</button>
             </div>
         </div>
     </div>
 
     <script>
+        /* 0. variable */
+
+        /* 1. on load */
+        $(function(){
+            /* 2.init*/
+
+            /* 3. event listener*/
+
+        })
+
+        /* 4. function */
         function setThumbnail(event) { 
             var reader = new FileReader(); 
             reader.onload = function(event) { 
@@ -39,10 +51,22 @@
             }; 
             reader.readAsDataURL(event.target.files[0]);
         }
+
         function profileupload(){
             var ele=document.getElementById('image');
             ele.click();
             console.log('test');
+        }
+
+        function anonymousLogin(){
+            var nickname=$("[name=nickname]").val();
+            if(ut.isEmpty(nickname)){
+                modal.required("nickname");
+                return;
+            }
+            $.post('/api/anonymousLogin',{nickname: $("[name=nickname]").val()},function(res){
+                ut.redirect("/");
+            });
         }
     </script>
 </th:block>

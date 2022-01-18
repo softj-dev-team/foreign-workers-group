@@ -19,7 +19,35 @@
 </head>
 
 <body>
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/customUtil.js"></script>
+    <script src="/assets/js/prototype-array.js"></script>
+    <script src="/assets/js/prototype-date.js"></script>
+    <script src="/assets/js/prototype-number.js"></script>
+    <script src="/assets/js/prototype-string.js"></script>
+
     <!-- 컨텐츠 영역 -->
     <th:block layout:fragment="layout-content"></th:block>
+
+    <div class="modal-wrap" id="modal-custom-alert">
+        <div class="modal-body">
+            <button class="mod-close" onclick="modal.close('#modal-custom-alert');"></button>
+            <p></p>
+            <div class="btnbox clearfix">
+                <button type="button" style="width: 100% !important;" class="cancelbtn" onclick="modal.close('#modal-custom-alert');">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-wrap" id="modal-custom-confirm">
+        <div class="modal-body">
+            <button class="mod-close" onclick="modal.close('#modal-custom-confirm');"></button>
+            <p></p>
+            <div class="btnbox clearfix">
+                <button type="button" class="cancelbtn" onclick="modal.close('#modal-custom-confirm');">Cancel</button>
+                <button type="button" class="delbtn" id="modalConfirmBtn"></button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

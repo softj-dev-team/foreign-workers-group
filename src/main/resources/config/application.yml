@@ -1,0 +1,147 @@
+spring:
+  profiles:
+    active: dev
+  data:
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 10000
+
+---
+server:
+  port: 8089
+  servlet:
+    session:
+      timeout: 180m
+
+spring:
+  profiles: dev
+  main:
+    allow-bean-definition-overriding: true
+
+  devtools:
+    livereload:
+      enabled: true
+  thymeleaf:
+    cache: false
+  freemarker:
+    cache: false
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://pwg.ckjjbku0zjdl.ap-northeast-2.rds.amazonaws.com:3306/pwg
+    username: pwg
+    password: '!1qazsoftj'
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    password: pass
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: none
+        show-sql: true
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+file:
+  uploadDir: C:/file_storage
+
+logging:
+  file:
+    path: ./log
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m (%file:%line\) %n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}
+    file:  ${CONSOLE_LOG_PATTERN:%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m (%file:%line\) %n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}
+  level:
+    ROOT: INFO
+    com.neok.leaders: DEBUG
+    org.springframework.boot: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+    jdbc.resultset: ERROR
+
+---
+server:
+  port: 80
+  servlet:
+    session:
+      timeout: 60m
+
+spring:
+  profiles: prod
+  main:
+    allow-bean-definition-overriding: true
+
+  devtools:
+    livereload:
+      enabled: false
+
+  freemarker:
+    cache: false
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://pwg.ckjjbku0zjdl.ap-northeast-2.rds.amazonaws.com:3306/pwg
+    username: pwg
+    password: '!1qazsoftj'
+
+  servlet:
+    multipart:
+      enabled: true
+
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    password: pass
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: none
+        show-sql: false
+        format_sql: false
+        use_sql_comments: false
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+file:
+  uploadDir: file_storage
+
+logging:
+  file:
+    path: ./log
+  pattern:
+    console: ${CONSOLE_LOG_PATTERN:%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m (%file:%line\) %n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}
+    file:  ${CONSOLE_LOG_PATTERN:%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m (%file:%line\) %n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}
+  level:
+    ROOT: INFO
+    com.neok.leaders: DEBUG
+    org.springframework.boot: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: ERROR
+    org.hibernate.type.descriptor.sql: ERROR
+    jdbc.resultset: ERROR
