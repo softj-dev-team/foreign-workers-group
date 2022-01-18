@@ -63,7 +63,7 @@ a.btn{
     color:#ffffff;
     border-radius: 70px;
     font-size:32px;
-    transition: .3s ease-out, -webkit-.3s ease-out;
+    transition: .3s ease-out, -webkit-.3s ease-out; 
 }
 /* text */
 input[type=text], input[type=password]{
@@ -169,7 +169,7 @@ input[type=checkbox]:checked+label::after{
     top: 3px;
     left: 0px;
     width:38px;
-    height:38px;
+    height:38px; 
     border-radius: 2px;
     background:url(../img/icon-Bcheck.png) no-repeat center / cover;
 }
@@ -432,7 +432,6 @@ input[type=checkbox]:checked+label::before{
 /* wrap */
 .wrap{
     background: url(../img/bg.png)no-repeat center / cover;
-    height: 100vh;
 }
 .wrap2{
     height: 100vh;
@@ -518,9 +517,15 @@ input[type=checkbox]:checked+label::before{
 .main-ul li {
     float: left;
     width: calc((100% - 3vw) / 4 - 0.01px);
+    height: 23vw;
+    max-height: 242px;
     text-align: center;
     margin-right: 1vw;
     margin-bottom: 20px;
+}
+.main-ul li.li-add{
+    float: right;
+    margin-right: 0;
 }
 .main-ul li:nth-child(4n){
     margin-right: 0;
@@ -566,6 +571,9 @@ input[type=checkbox]:checked+label::before{
 .main-ul li a.eng::before{
     background: url(../img/people.jpg)no-repeat center /cover;
 }
+.main-ul li a.add-i::before{
+    background: rgba(26, 69, 170, 0.5) url(../img/add.png)no-repeat 48% / 50%;
+}
 /* footer */
 .main-footer,.sub-footer{
     position: fixed;
@@ -598,15 +606,6 @@ input[type=checkbox]:checked+label::before{
     background: url(../img/Request.png)no-repeat center / cover;
     float: left;
     margin: 12px 0;
-}
-.main-footer .mainfoot-in a.add-i{
-    display: block;
-    position: absolute;
-    right: 25px;
-    top: -50px;
-    background: url(../img/add.png)no-repeat center / cover;
-    width: 35px;
-    height: 35px;
 }
 .sub-footer .foot-in {
     max-width: 1024px;
