@@ -1,35 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>(-_-v)</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <link href="assets/css/reset.css" rel="stylesheet" type="text/css">
-    <link href="assets/css/common.css" rel="stylesheet" type="text/css">
-</head>
-<body>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
+
+<th:block layout:fragment="layout-content">
     <div class="wrap">
         <div class="main-header">
             <h1 class="main-tit">FOR FOREIGN WORKERS!</h1>
         </div>
         <div class="main-wrap clearfix wrap-padding">
             <ul class="main-ul">
-                <li><a href="sub/board-list.html" class="cam">កម្ពុជា</a></li>
-                <li><a href="sub/board-list.html" class="vie">Việt Nam</a></li>
-                <li><a href="sub/board-list.html" class="nep">नेपाल</a></li>
-                <li><a href="sub/board-list.html" class="ina">Indonesia</a></li>
-                <li><a href="sub/board-list.html" class="tha">ประเทศไทย</a></li>
-                <li><a href="sub/board-list.html" class="mya">မြန်မာ</a></li>
-                <li><a href="sub/board-list.html" class="phi">Pilipinas</a></li>
-                <li><a href="sub/board-list.html" class="eng">English</a></li>
+                <li><a href="/boardList" class="cam">កម្ពុជា</a></li>
+                <li><a href="/boardList" class="vie">Việt Nam</a></li>
+                <li><a href="/boardList" class="nep">नेपाल</a></li>
+                <li><a href="/boardList" class="ina">Indonesia</a></li>
+                <li><a href="/boardList" class="tha">ประเทศไทย</a></li>
+                <li><a href="/boardList" class="mya">မြန်မာ</a></li>
+                <li><a href="/boardList" class="phi">Pilipinas</a></li>
+                <li><a href="/boardList" class="eng">English</a></li>
             </ul>
         </div>
         <div class="main-footer">
@@ -40,5 +26,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+</th:block>

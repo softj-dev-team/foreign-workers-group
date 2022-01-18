@@ -1,24 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOR FOREIGN WORKERS!</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <link href="../assets/css/reset.css" rel="stylesheet" type="text/css">
-    <link href="../assets/css/common.css" rel="stylesheet" type="text/css">
-</head>
-<body>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
+
+<th:block layout:fragment="layout-content">
     <div class="wrap2">
         <div class="header">
             <div class="hd-in">
-                <a href="../index.html" class="home"></a>
+                <a href="/" class="home"></a>
                 <span class="title">Vietnamese friends, gather up!</span>
                 <a href="" class="mypage"><span class="new-R"></span></a>
             </div>
@@ -28,7 +15,7 @@
                <div class="list-in clearfix">
                     <div class="list-t">
                         <div class=" clearfix">
-                            <a href="">
+                            <a href="/boardView">
                                 <span class="ellipsis n-tag ">For Foreign workers this is an announcement Certainly read</span>
                             </a>
                         </div>
@@ -50,7 +37,7 @@
                     <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
                     <div class="list-t">
                         <div class=" clearfix">
-                            <a href="">
+                            <a href="/boardView">
                                 <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
                             </a>
                         </div>
@@ -106,7 +93,7 @@
                     <div class="re-i"></div>
                     <div class="list-t">
                         <div class=" clearfix">
-                            <a href="">
+                            <a href="/boardView">
                                 <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
                             </a>
                         </div>
@@ -126,7 +113,7 @@
                     <div class="re-i"></div>
                     <div class="list-t">
                         <div class=" clearfix">
-                            <a href="">
+                            <a href="/boardView">
                                 <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
                             </a>
                         </div>
@@ -144,11 +131,10 @@
         </div>
         <div class="sub-footer">
             <div class="foot-in">
-                <a href="" class="search">Search</a>
-                <a href="" class="writing">Writing</a>
+                <a href="/search" class="search">Search</a>
+                <a href="/boardWrite" class="writing">Writing</a>
                 <a href="" class="invite">Invite</a>
             </div>
         </div>
     </div>
-</body>
-</html>
+</th:block>
