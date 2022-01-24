@@ -1,0 +1,71 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
+
+<th:block layout:fragment="layout-content">
+    <div class="wrap2">
+        <div class="header white">
+            <div class="hd-in">
+                <span class="title">FOR FOREIGN WORKERS!</span>
+            </div>
+        </div>
+        <div class="board-wrap clearfix">
+
+
+            <div class="anonymous-wrap">
+                <!--                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">-->
+                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap">
+                <div></div>
+            </div>
+                <input type="text" id="nickname" name="nickname" placeholder="Nickname" th:value="${session.loginVO.nickname}">
+                <button type="button" class="btn" onclick="setNickName()">setting Nickname</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* 0. variable */
+
+        /* 1. on load */
+        $(function(){
+            /* 2.init*/
+
+            /* 3. event listener*/
+            $("#facebook").click(function(){ //페이스북 버튼을 클릭하면
+                facebookLogin();
+
+                //1.클릭이벤트->2. 로그인하는거
+            });
+        })
+
+        /* 4. function */
+        function setThumbnail(event) {
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById("profilewrap").innerHTML ="";
+                var img = document.createElement("div");
+                img.setAttribute("style", "background-image:url("+event.target.result+")");
+                img.setAttribute("ID", "profileimg");
+                document.querySelector("div#profilewrap").appendChild(img);
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function profileupload(){
+            var ele=document.getElementById('image');
+            ele.click();
+            console.log('test');
+        }
+
+        function setNickName() {
+            var nickname = $("[name=nickname]").val();
+            if (ut.isEmpty(nickname)) {
+                modal.required("nickname");
+                return;
+            }
+            $.post('/api/setNickName', {nickname: nickname}, function (res) {
+                ut.redirect("/");
+            });//밑에 ajax랑 똑같이 사용해 주면 된다.
+
+        }
+    </script>
+</th:block>
