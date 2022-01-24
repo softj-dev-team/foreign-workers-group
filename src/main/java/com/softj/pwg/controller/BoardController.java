@@ -64,5 +64,10 @@ public class BoardController {
         return "sub/search";
     }
 
+    @GetMapping("/nickName")
+    public String nickName() throws Exception{
+        return "sub/nickname";
+    }
+
 
 }

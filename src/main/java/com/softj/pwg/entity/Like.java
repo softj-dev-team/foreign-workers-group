@@ -10,14 +10,18 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "like")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class User extends Auditing{
-    private String nickname;
-    private String id;
-    private String platform;
+public class Like extends Auditing{
 
 
+    @ManyToOne
+    @JoinColumn(name = "user_seq")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "board_seq")
+    private Board board;
 }

@@ -7,7 +7,7 @@ $(function(){
         if(xhr.status == 200 && xhr.responseText.startsWith("<!--")){
             modal.alert("Need Login");
         }
-});
+    });
 });
 
 window.addEventListener("load", function(){

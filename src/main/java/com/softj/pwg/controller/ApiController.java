@@ -18,11 +18,19 @@ import java.util.Map;
 public class ApiController {
     private final UserService userService;
 
-    //익명로그인
-    @PostMapping("/anonymousLogin")
-    public Response anonymousLogin(ParamVO params){
+    //로그인
+    @PostMapping("/login")
+    public Response login(ParamVO params) {
         return Response.builder()
-                .data(userService.anonymousLogin(params))
+                .data(userService.login(params))
+                .build();
+    }
+
+    //닉네임 로그인
+    @PostMapping("/setNickName")
+    public Response setNickName(ParamVO params) {
+        return Response.builder()
+                .data(userService.setNickName(params))
                 .build();
     }
 }
