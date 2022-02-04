@@ -69,6 +69,7 @@ dependencies {
     //Querydsl
     implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '4.4.0'
     implementation group: 'com.querydsl', name: 'querydsl-apt', version: '4.4.0'
+    implementation group: 'com.querydsl', name: 'querydsl-core', version: '4.4.0'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

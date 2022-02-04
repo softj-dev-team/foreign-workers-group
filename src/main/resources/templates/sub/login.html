@@ -1,6 +1,11 @@
 <html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
+<head>
+    <!--구글 api 사용을 위한 스크립트-->
+    <meta name ="google-signin-client_id" content="733678719087-6gm0ddtjee4vnqa3d6p0cf970dp99kvl.apps.googleusercontent.com">
 
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
 <th:block layout:fragment="layout-content">
     <div class="wrap2">
         <div class="header white">
@@ -173,6 +178,7 @@
         }
         function onSignIn(googleUser) {
             $.post('/api/login',{id: googleUser.yu.nv,platform:"google"},function(res){
+                console.log("dfsd"); // 콘솔찍은다음에
                 ut.redirect("nickName");
             });
 

@@ -1,19 +1,26 @@
 <html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
-
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote-lite.min.js"></script>
+</head>
 <th:block layout:fragment="layout-content">
     <div class="wrap2">
         <div class="header white big">
             <div class="hd-in">
 
                 <a href="javascript:history.back()"class="back back-btn"></a>
-                <button class="btn">Submit</button>
+                <button class="btn" onclick="boardWrite()">Submit</button>
             </div>
         </div>
-        <div class="board-wrap write">
-            <input type="text" class="note-title" placeholder="Title">
-            <textarea id="summernote"></textarea>
-        </div>
+        <form id="form">
+            <div class="board-wrap write">
+                <input type="text" name="subject" class="note-title" id="subject" placeholder="Title"  th:value="${view.subject}">
+                <input type="hidden" name="seq" th:value="${view.seq}">
+
+                <textarea id="summernote" name="content" th:text="${view.content}"></textarea>
+            </div>
+        </form>
     </div>
     <script>
         //summernote
@@ -130,14 +137,31 @@
     <script>
     /* 0. variable */
 
+
     /* 1. on load */
     $(function(){
     /* 2.init*/
 
     /* 3. event listener*/
 
+
     })
 
-    /* 4. function */
+    /* 4. function */ //메서드만들기.
+   function boardWrite() {
+       let subject = $('#subject').val();
+       let content =$('#summernote').val();
+       if(subject=='' || content==''){
+           alert('제목과 내용을 입력해주세요');
+           return;
+       }
+       let formData = $("#form").serialize();
+       console.log(formData);
+       if(confirm('등록하시겠습니까?')) { //yes or no 창 띄우는거.
+           $.post('/api/setBoardWrite', formData, function (Response) {
+               location.href = "/board/list"
+           });
+       }
+   }
     </script>
 </th:block>
