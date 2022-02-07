@@ -7,21 +7,21 @@
             <div class="hd-in">
                 <a href="javascript:history.back()" class="back back-btn"></a>
                 <span class="title">Vietnamese friends, gather up!</span>
-                <a href="" class="mypage"><span class="new-R"></span></a>
+                <a href="" class="mypage"></a>
             </div>
         </div>
         <div class="board-wrap clearfix">
            <div class="view-in">
                <div class="view-top">
-                    <h3>Hello, nice to meet you.</h3>
+                    <h3 th:text="${view.subject}" id="subject" ></h3>
                     <div class="view-top-in">
                         <div class="top-left">
                             <div class="my-img" style="background-image: url(../assets/img/img2.png);"></div>
                             <div class="left-in">
-                                <p class="view-name">name</p>
+                                <p class="view-name" th:text="${view.user.nickname}"></p>
                                 <div class="view-info">
-                                    <span class="time-v">14:23</span>
-                                    <span class="view-v">121</span>
+                                    <span class="time-v" th:text="${view.createdAt}"></span>
+                                    <span class="view-v" th:text="${view.views}"></span>
                                 </div>
                             </div>
                         </div>
@@ -30,97 +30,50 @@
                                 <span>999</span>
                             </div>
                             <div class="comment-btn-box">
-                                <button type="button" class="modify-btn"></button>
-                                <button type="button" class="del-btn" onclick="modal.open('#deleteModal');"></button>
+                                <th:block th:if="${view.user.seq == session.loginVO.seq}"><!--글수정 삭제버튼-->
+                                    <button type="button" class="modify-btn" id="modify" th:value="${view.seq}" ></button>
+                                    <button type="button" class="del-btn" onclick="modal.open('#deleteModal');"></button>
+                                </th:block>
                             </div>
                         </div>
                     </div>
                </div>
                <div class="view-md">
-                    <img src="../assets/img/snowmen.jpg" alt="" style="width: 100%;">
-                    <div>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque rem doloribus numquam nisi deleniti. Vel eius laborum eveniet incidunt! Necessitatibus culpa veniam inventore cum iusto beatae pariatur. Qui, quo asperiores.</p>
-                    </div>
+                    <th:block th:utext="${view.content}"></th:block>
                </div>
                <div class="view-comment">
-                    <div class="total"><span class="total-font">Comments</span><span class="com-total">2,100</span></div>
+                    <div class="total"><span class="total-font">Comments</span><span class="com-total"></span></div>
+                   <form id="form">
                     <div class="comment-box">
-                        <input type="text" placeholder="comment"><button type="button" class="com-btn">submit</button>
+                        <input type="text" placeholder="comment" name="content" ><button type="button" class="com-btn"  onclick="reply()">submit</button>
+                        <input type="hidden" name="boardSeq" th:value="${view.seq}">
                     </div>
+                   </form>
                     <div class="comment-view">
-                        <div class="comment-mo">
+                        <div class="comment-mo" th:each="comment : ${comment}">
                             <div class="cmt-out">
                                 <div class="comment-img" style="background-image: url(../assets/img/space.png);"></div>
                                 <div class="comment-in">
                                     <div class="flexwrap">
-                                        <div class="com-in-t">name</div>
+                                        <div class="com-in-t" th:text="${comment.user.nickname}">name</div>
+
                                         <div class="comment-btn-box">
-                                            <button type="button" class="modify-btn"></button>
-                                            <button type="button" class="del-btn"></button>
+                                            <th:block th:if="${view.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
+                                                <button type="button" class="modify-btn" ></button>
+                                            <button type="button" class="del-btn" th:onclick="|javascript:commentRemove('${comment.seq}')|"></button>
+                                            </th:block>
                                         </div>
                                     </div>
-                                    <div class="com-con">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
+                                    <div class="com-con" th:value="${comment.seq}" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
                                     <div class="list-f">
-                                        <span class="time">14:23</span>
-                                        <button class="cmt-btn">comment</button>
+                                        <span class="time"></span>
                                     </div>
+
                                     <div class="comment-box cmt-modify">
-                                        <input type="text" placeholder="comment"><button class="mod-close"></button><button type="button" class="com-btn">submit</button>
+                                        <input type="text" name="comment" id="textContent" placeholder="comment" >
+                                        <button class="mod-close"></button><button type="button" class="com-btn" >submit</button>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="cmt-out-re">
-                                <div class="comment-img" style="background-image: url(../assets/img/snowmen.jpg);"></div>
-                                <div class="comment-in">
-                                    <div class="flexwrap">
-                                        <div class="com-in-t">name</div>
-                                        <div class="comment-btn-box">
-                                            <button type="button" class="modify-btn"></button>
-                                            <button type="button" class="del-btn"></button>
-                                        </div>
-                                    </div>
-                                    <div class="com-con">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-                                    <div class="list-f">
-                                        <span class="time">14:23</span>
-                                    </div>
-                                    <div class="comment-box cmt-modify">
-                                        <input type="text" placeholder="comment"><button class="mod-close"></button><button type="button" class="com-btn">submit</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="comment-mo">
-                            <div class="cmt-out">
-                                <div class="comment-img" style="background-image: url(../assets/img/space.png);"></div>
-                                <div class="comment-in">
-                                    <div class="flexwrap">
-                                        <div class="com-in-t">name</div>
-                                        <div class="comment-btn-box">
-                                            <button type="button" class="modify-btn"></button>
-                                            <button type="button" class="del-btn"></button>
-                                        </div>
-                                    </div>
-                                    <div class="com-con">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-                                    <div class="list-f">
-                                        <span class="time">14:23</span>
-                                        <button class="cmt-btn">comment</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cmt-out-re">
-                                <div class="comment-img" style="background-image: url(../assets/img/snowmen.jpg);"></div>
-                                <div class="comment-in">
-                                    <div class="flexwrap">
-                                        <div class="com-in-t">name</div>
-                                        <div class="comment-btn-box">
-                                            <button type="button" class="modify-btn"></button>
-                                            <button type="button" class="del-btn"></button>
-                                        </div>
-                                    </div>
-                                    <div class="com-con">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
-                                    <div class="list-f">
-                                        <span class="time">14:23</span>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -164,12 +117,14 @@
         $('.view-comment .modify-btn').on('click', function(){
             var reply = $(this).parent().parent().parent().children('.com-con');
             var replyT = reply.text();
+            var replySeq = reply.attr('value'); /* th value 시퀀스값*/
+            console.log(replySeq);
             if(reply.css('display') == 'none'){
                 reply.css('display', 'flex');
                 reply.next('.re-modify').remove();
             }else{
-                reply.css('display', 'none');
-                reply.after('<div class="com-t re-modify"><textarea name="" id="" cols="30" rows="10">'+ replyT+'</textarea><button type="button" class="btn-grey">modify</button></div>');
+                reply.css('display', 'none');                                                                                                                                               /*불러온값.*/
+                reply.after('<div class="com-t re-modify"><textarea name="" id="a" cols="30" rows="10">'+ replyT+'</textarea><button type="button" class="btn-grey" onclick="modifyCommet(this,'+replySeq+')" >modify</button></div>');
             }
         });
         $(document).on('click', '.re-modify button', function(){
@@ -180,4 +135,48 @@
             $(this).parent('.re-modify').remove();
         });
     </script>
+    <script>
+        console.log()
+        /* 0. variable */
+
+        // /* 1. on load */
+
+        function commentRemove(replySeq){/*삭제*/
+            $.post('/api/setCommentRemove' , {seq:replySeq},function (Response) {
+                location.href="/board/view?seq="+boardSeq;
+            });
+
+        }
+        function modifyCommet(event,replySeq){/*this랑 시퀀스넘어옴 (댓글수정)*/
+            console.log(replySeq);
+            let boardSeq = $('#modify').val();
+            let content= $(event).prev().val();/*textarea댓글내용*/
+            $.post('/api/setCommentWrite' , {content,seq:replySeq,boardSeq:boardSeq},function (Response) {
+                location.href="/board/view?seq="+boardSeq;
+            });
+        llll
+
+        function reply() {/*댓글등록*/
+            let formData = $("#form").serialize();
+            let seq = $('#modify').val();
+            console.log(formData);
+            $.post('/api/setCommentWrite', formData, function (Response) {
+                location.href="/board/view?seq="+seq;
+            });
+        };
+
+        $(function(){
+            /* 2.init*/
+          $("#modify").click(function() {
+                let seq = $('#modify').val();
+                location.href = "/board/openWrite?seq="+seq;
+                /* 3. event listener*/
+
+            });
+
+         });
+
+
+    </script>
+
 </th:block>

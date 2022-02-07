@@ -9,25 +9,24 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "board")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
 public class Board extends Auditing{
     private String subject;
     private String nation;
     private String content;
-    private Long view;
+    private long views;
+//    @Column(name="user_seq")
+//    private long userSeq;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_seq")
     private User user;
 
-    @OneToMany(mappedBy = "board")
-    private List<Like> likes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "board")
-    private List<Coment> coments = new ArrayList<>();
-
+//    @OneToMany(mappedBy = "board")
+//    private List<Coment> coment;
 
 }
 

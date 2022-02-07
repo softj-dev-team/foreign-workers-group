@@ -20,12 +20,15 @@ public class UserService {
         User user = null; //가입여부만확인함
         if(!StringUtils.isEmpty(params.getPlatform())) { //페이스북이면 아이디랑 플랫폼가져와서
             user = userRepo.findFirstByIdAndPlatform(params.getId(), params.getPlatform());//아이디 플랫폼 넣어서 조회
+
+            //시퀀스 받아오면됌.
         }
         if(Objects.isNull(user)){ //가입이 안되어 있으면 user
             user = userRepo.save(User.builder()
                     .nickname(params.getNickname())
                     .id(params.getId()) //아이디
                     .platform(params.getPlatform())//플렛폼.
+
                     .build());//쿼리문날라가고
 
         }

@@ -19,5 +19,8 @@ public class User extends Auditing{
     private String id;
     private String platform;
 
+//    @OneToMany(mappedBy = "board")
+//    private List<Coment> coment;
+
 
 }

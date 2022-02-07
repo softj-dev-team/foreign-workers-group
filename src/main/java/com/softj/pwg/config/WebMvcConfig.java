@@ -18,5 +18,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/login")
                 .excludePathPatterns("/assets/**")
                 .addPathPatterns("/**");
+
+        registry.addInterceptor(new NationInterceptor())
+                .addPathPatterns("/board/**")
+                .addPathPatterns("/search/**")
+                .addPathPatterns("/mypage/**");
     }
 }
