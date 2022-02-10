@@ -1,5 +1,7 @@
 package com.softj.pwg.controller;
 
+import com.softj.pwg.entity.Like;
+import com.softj.pwg.entity.User;
 import com.softj.pwg.service.BoardService;
 import com.softj.pwg.service.UserService;
 import com.softj.pwg.util.AuthUtil;
@@ -33,11 +35,13 @@ public class ApiController {
                 .data(userService.setNickName(params))
                 .build();
     }
+    //네이션 세션 저장
     @PostMapping("/setNation")//보드리스트
     public void setNation(ParamVO params) {
         AuthUtil.setAttr("nation", params.getNation()); //param에서 값가져옴
 
     }
+    //글 작성, 글 수정 완료 db 등록
     @PostMapping("/setBoardWrite")
     public Response setBoardWrite(ParamVO params) {
         return Response.builder()
@@ -45,6 +49,7 @@ public class ApiController {
                 .build();
 
     }
+    //댓글 작성, 수정 완료
     @PostMapping("/setCommentWrite")
     public Response setCommentWrite(ParamVO params) {
         return Response.builder()
@@ -52,18 +57,23 @@ public class ApiController {
                 .build();
 
     }
-    @PostMapping("/setCommentRemove")
-    public void setCommentRemove(ParamVO params) {
-                boardService.comentRemove(params);
+    @PostMapping("/setRemoveComent") //댓글삭제
+    public void setRemoveComent(ParamVO params) {
+         boardService.deleteComment(params.getSeq());//type long . 이미 내장된 것.primary key.
+
     }
 
+    @PostMapping("/setRemoveBoard") //게시글 삭제
+    public void setRemoveBoard(ParamVO params) {
+        boardService.deleteBoard(params.getSeq());
 
-//    @PostMapping("/setBoardComment")//보드리스트
-//    public Response setBoardComment(ParamVO params) {
-//        return Response.builder()
-//                .data(boardService.BoardComment(params))
-//                .build();
-//
-//    }
+    }
 
+    @PostMapping("/setBoardLike") //좋아요,
+    public Response setLike(ParamVO params) {
+        boardService.likeBoard(params);
+        return Response.builder()
+                .data("OK")
+                .build();
+    }
 }

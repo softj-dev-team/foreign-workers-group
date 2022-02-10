@@ -5,7 +5,7 @@
     <div class="wrap2">
         <div class="header">
             <div class="hd-in">
-                <a href="javascript:history.back()" class="back back-btn"></a>
+                <a href="javascript: void(0);" class="back back-btn"></a>
                 <span class="title">Vietnamese friends, gather up!</span>
                 <a href="" class="mypage"></a>
             </div>
@@ -27,13 +27,13 @@
                         </div>
                         <div class="top-right">
                             <div class="cmt">
-                                <span>999</span>
+                                <span id="likeCount" th:text="${likeCount}"></span>
                             </div>
                             <div class="comment-btn-box">
-                                <th:block th:if="${view.user.seq == session.loginVO.seq}"><!--글수정 삭제버튼-->
+                                <!--<th:block th:if="${view.user.seq == session.loginVO.seq}">-->
                                     <button type="button" class="modify-btn" id="modify" th:value="${view.seq}" ></button>
-                                    <button type="button" class="del-btn" onclick="modal.open('#deleteModal');"></button>
-                                </th:block>
+                                    <button type="button" class="del-btn"  onclick="modal.open('#deleteModal');"></button>
+                                <!--</th:block>-->
                             </div>
                         </div>
                     </div>
@@ -46,25 +46,25 @@
                    <form id="form">
                     <div class="comment-box">
                         <input type="text" placeholder="comment" name="content" ><button type="button" class="com-btn"  onclick="reply()">submit</button>
-                        <input type="hidden" name="boardSeq" th:value="${view.seq}">
+                        <input type="hidden" name="boardSeq" id="boardSeq" th:value="${view.seq}"><!-- 스크립트에서 사용.-->
                     </div>
                    </form>
                     <div class="comment-view">
                         <div class="comment-mo" th:each="comment : ${comment}">
                             <div class="cmt-out">
-                                <div class="comment-img" style="background-image: url(../assets/img/space.png);"></div>
+                                <div class="comment-img"></div>
                                 <div class="comment-in">
                                     <div class="flexwrap">
-                                        <div class="com-in-t" th:text="${comment.user.nickname}">name</div>
+                                        <div class="com-in-t" th:text="${comment.user.nickname}"></div>
 
                                         <div class="comment-btn-box">
-                                            <th:block th:if="${view.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
-                                                <button type="button" class="modify-btn" ></button>
-                                            <button type="button" class="del-btn" th:onclick="|javascript:commentRemove('${comment.seq}')|"></button>
-                                            </th:block>
+                                            <th:block th:if="${comment.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
+                                                <button type="button" class="modify-btn" th:value="${comment.seq}"></button>
+                                                <button type="button" class="del-btn" th:value="${comment.seq}"></button>
+                                           </th:block>
                                         </div>
                                     </div>
-                                    <div class="com-con" th:value="${comment.seq}" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
+                                    <div class="com-con" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
                                     <div class="list-f">
                                         <span class="time"></span>
                                     </div>
@@ -81,7 +81,7 @@
                </div>
            </div>
         </div>
-        <div class="modal-wrap" id="deleteModal">
+        <div class="modal-wrap" id="deleteModal"th:value="${view.nation}"  ><!--글삭제시 nation값-->
             <div class="modal-body">
                 <button class="mod-close" onclick="modal.close('#deleteModal');"></button>
                 <p>Do you really want to remove this post?</p>
@@ -94,31 +94,55 @@
         <div class="sub-footer">
             <div class="foot-in">
                 <a href="" class="back-f back-btn">Back</a>
-                <a href="" class="like">Like</a>
+                <a href="" class="like" id="likeBtn" th:classappend="${isMyLike ? 'on' : ''}">Like</a>
                 <a href="" class="share">Share</a>
             </div>
         </div>
     </div>
     <script>
-        $('.foot-in a.like').click(function(e){
-            e.preventDefault();
-            $('.like').toggleClass('on');
+        /*조회수증가 뒤로가기했을때도 적용되겠금*/
+        $('.back-btn').click(function(e){
+            // e.preventDefault();
+            location.href="/board/list";
         });
+        /*좋아요 임시하트 기능*/
+
+        $('.foot-in a.like').click(function(e){
+            let boardSeq = $('#modify').val();
+            e.preventDefault();
+            $.post('/api/setBoardLike' , {seq:boardSeq},function (Response) {
+
+                /*화면에 있는 숫자를 바꾸는거*/
+                var likeCount = Number($('#likeCount').text());
+                if ($('#likeBtn').hasClass('on')) {/*현재 하트가 있는 상태*/
+                    likeCount--;
+                } else {
+                    likeCount++;
+                }
+                $('#likeCount').text(likeCount);/*set해줌*/
+
+                $('.like').toggleClass('on');
+
+            });
+        });
+
         $('.cmt-btn').click(function(){
             $(this).parent().parent().children('.cmt-modify').toggleClass('on');
             $('.cmt-modify input').focus();
-        })
+        }) /*삭제*/
         $(document).on('click','.view-comment .del-btn', function () {
             $(this).parent().parent().parent().parent().remove();
         });
         $('.mod-close').click(function(){
             $(this).parent().removeClass('on');
         });
-        $('.view-comment .modify-btn').on('click', function(){
+        /*수정*/
+        $('.view-comment .modify-btn').on('click', function(){/*버튼 자체에 value값 세팅해줌 =*/
             var reply = $(this).parent().parent().parent().children('.com-con');
             var replyT = reply.text();
-            var replySeq = reply.attr('value'); /* th value 시퀀스값*/
+            var replySeq = $(this).val(); /* th value 시퀀스값*/
             console.log(replySeq);
+            /*수정 버튼 눌렀을 때*/
             if(reply.css('display') == 'none'){
                 reply.css('display', 'flex');
                 reply.next('.re-modify').remove();
@@ -140,28 +164,49 @@
         /* 0. variable */
 
         // /* 1. on load */
-
-        function commentRemove(replySeq){/*삭제*/
-            $.post('/api/setCommentRemove' , {seq:replySeq},function (Response) {
-                location.href="/board/view?seq="+boardSeq;
+         /*글삭제*/
+        $(document).on('click','.delbtn',function (){
+            let boardSeq = $('#modify').val();
+            let boardNation =$('#deleteModal').val();
+            $.post('/api/setRemoveBoard' , {seq:boardSeq},function (Response) {
+                location.href="/board/list?nation="+boardNation;
             });
+        });
 
-        }
+            /*댓글삭제*/
+        $(document).on('click','.view-comment .del-btn', function() {  /*'.view-comment*/
+            var replySeq = $(this).val();/* 해당댓글 선택*/
+            if(confirm("삭제?")){
+                $.post('/api/setRemoveComent' , {seq:replySeq},function (Response) {
+                    location.reload();
+                });
+            }
+        });
+
+        // $(document).on('click','.modify-btn',function (){
+        //     let boardSeq = $('#modify').val();
+        //     //let content= $(event).prev().val();/*textarea댓글내용*/
+        //     $.post('/api/setCommentWrite' , {content,boardSeq:boardSeq},function (Response) {
+        //         location.reload();
+        //     });
+        //
+        // });
+
         function modifyCommet(event,replySeq){/*this랑 시퀀스넘어옴 (댓글수정)*/
             console.log(replySeq);
             let boardSeq = $('#modify').val();
             let content= $(event).prev().val();/*textarea댓글내용*/
+            console.log(boardSeq);
+            console.log(content);
             $.post('/api/setCommentWrite' , {content,seq:replySeq,boardSeq:boardSeq},function (Response) {
                 location.href="/board/view?seq="+boardSeq;
             });
-        llll
+        };
 
-        function reply() {/*댓글등록*/
+        function reply() {/*댓글등록 */
             let formData = $("#form").serialize();
-            let seq = $('#modify').val();
-            console.log(formData);
             $.post('/api/setCommentWrite', formData, function (Response) {
-                location.href="/board/view?seq="+seq;
+                location.reload();
             });
         };
 
@@ -173,6 +218,7 @@
                 /* 3. event listener*/
 
             });
+
 
          });
 

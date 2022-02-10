@@ -6,8 +6,8 @@
         <div class="header">
             <div class="hd-in">
                 <a href="/" class="home"></a>
-                <span class="title">Vietnamese friends, gather up!</span>
-                <a href="" class="mypage"><span class="new-R"></span></a>
+                <span class="title">${nationName} friends, gather up!</span>
+                <a href="/mypage/alarm" class="mypage"><span class="new-R"></span></a>
             </div>
         </div>
         <div class="board-wrap clearfix">
@@ -18,7 +18,7 @@
                             <a th:href="'/board/view?seq='+${el.seq}" class="ellipsis " th:text="${el.subject}"></a>
                         </div>
                         <div class="list-f">
-                            <span class="name" th:text="${el.subject}">name</span>
+                            <span class="name" th:text="${el.user.nickname}">name</span>
                             <span class="time" th:text="${el.createdAt}">14:23</span>
                             <span class="view" th:text="${el.views}">121,103</span>
                         </div>

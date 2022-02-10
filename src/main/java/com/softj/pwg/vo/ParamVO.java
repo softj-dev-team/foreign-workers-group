@@ -11,8 +11,12 @@ public class ParamVO {
     private String platform;
     private String id;
     private String nation;
+    private String nationName;
     private String content;
     private String subject;
     private long views;
+    private String search;
+
+
 
 }
