@@ -1,5 +1,6 @@
 package com.softj.pwg.controller;
 
+import com.softj.pwg.entity.Board;
 import com.softj.pwg.entity.Like;
 import com.softj.pwg.entity.User;
 import com.softj.pwg.service.BoardService;
@@ -8,6 +9,9 @@ import com.softj.pwg.util.AuthUtil;
 import com.softj.pwg.vo.ParamVO;
 import com.softj.pwg.vo.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -75,5 +79,19 @@ public class ApiController {
         return Response.builder()
                 .data("OK")
                 .build();
+    }
+    @PostMapping("/getPage") //페이징
+    public Response getPage(ParamVO params,Pageable pageable) {
+        return Response.builder()
+                .data(boardService.boardList(params,pageable))
+                .build();
+
+    }
+    @PostMapping("/getCommentPage") //페이징
+    public Response getCommentPage(ParamVO params,Pageable pageable) {
+        return Response.builder()
+                .data(boardService.boardComent(params, pageable))
+                .build();
+
     }
 }

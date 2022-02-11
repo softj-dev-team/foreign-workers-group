@@ -109,3 +109,11 @@ var modal = {
         $(selector).removeClass('on');
     }
 };
+
+function loading(isShow){
+    if(isShow) {
+        $("div.loading").addClass("on");
+    }else{
+        $("div.loading").removeClass("on");
+    }
+}

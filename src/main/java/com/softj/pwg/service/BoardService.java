@@ -1,13 +1,9 @@
 package com.softj.pwg.service;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.softj.pwg.entity.Board;
-import com.softj.pwg.entity.Coment;
-import com.softj.pwg.entity.Like;
-import com.softj.pwg.entity.QBoard;
-import com.softj.pwg.entity.QComent;
-import com.softj.pwg.entity.User;
+import com.softj.pwg.entity.*;
 import com.softj.pwg.repo.BoardRepo;
 import com.softj.pwg.repo.ComentRepo;
 import com.softj.pwg.repo.LikeRepo;
@@ -15,9 +11,7 @@ import com.softj.pwg.repo.UserRepo;
 import com.softj.pwg.util.AuthUtil;
 import com.softj.pwg.vo.ParamVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
@@ -38,35 +32,51 @@ public class BoardService {
 
     public Page<Board> boardList(ParamVO params, Pageable pageable) {
 
-        QBoard qBoard = QBoard.board;
-        //boardRepo.findById(params.getSeq());
-
-        BooleanBuilder where = new BooleanBuilder();//where를 처리하는 기능
-
-        String nation = (String) AuthUtil.getAttr("nation");
+        QBoard qBoard = QBoard.board; //앤티티 가져온거
+        BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
         where.and(qBoard.nation.eq((String) AuthUtil.getAttr("nation"))); //해당 카테고리 글만 보여지게.
         where.and(qBoard.isDel.eq(false));//삭제 처리가 안된글만 0이면은
-        if (params.getSearch() != null) {//검색어가 있으면 LIKE 추가
-            where.and(qBoard.subject.like(params.getSearch()));
-        }
-        return boardRepo.findAll(where, pageable); //board에 있는걸 다 가져온다.
+//        if (params.getSearch() != null) {//검색어가 있으면 LIKE 추가
+//            where.and(qBoard.subject.like(params.getSearch()));
+//        }
+        JPAQuery<Board> query = jpaQueryFactory
+                                .selectFrom(qBoard)
+                                .join(qBoard.user)
+                                .fetchJoin()
+                                .where(where)
+                                .orderBy(qBoard.seq.desc())
+                                .limit(pageable.getPageSize())//조회할 개수 지정
+                                .offset(pageable.getOffset());//시작index지정offset
+        return new PageImpl<Board>(query.fetch(), pageable, query.fetchCount());
 
     }
-
+    //조회수
     public Board boardView(ParamVO params) { //글 상세 보여주는 메서드
         Board board = boardRepo.findBySeq(params.getSeq());
         board.increaseViewCount();
         return boardRepo.save(board);
     }
-
-    public List<Coment> boardComent(ParamVO params ) {
+    //댓글리스트 어느글에 누가 댓글을 달았는지 알아야 된다.
+    public Page<Coment> boardComent(ParamVO params,Pageable pageable) {
         //댓글 목록 조회하는 메서드<삭제안된 댓글만 조회해야 함.어떤글에 어떤 댓글 구현해야 하는지.>
-        Board board = Board.builder().build();
-        board.setSeq(params.getSeq());//시퀀스 값이 있는 상태
+        QComent qComent=QComent.coment;
+        AuthUtil.getAttr("loginVO");
+        BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
+        where.and(qComent.board.seq.eq(params.getSeq())); //어느 글에 누가 댓글 달았는지 알기위해서 게시글 시퀀스
+        where.and(qComent.isDel.eq(false));//삭제 처리가 안된글만 0이면은
 
-        return comentRepo.findAllByBoardAndIsDelFalseOrderBySeqDesc(board); //coment에 있는걸 다 가져온다.
+        JPAQuery<Coment> query = jpaQueryFactory
+                .selectFrom(qComent)
+                .join(qComent.user)
+                .fetchJoin()
+                .where(where)
+                .orderBy(qComent.seq.desc())//정렬
+                .limit(pageable.getPageSize())//조회할 개수 지정
+                .offset(pageable.getOffset());//시작index지정offset
+        return new PageImpl<Coment>(query.fetch(), pageable, query.fetchCount());
 
     }
+
 
     public Board boardWrite(ParamVO params) {
         String tmp = (String)AuthUtil.getAttr("nation");
@@ -98,8 +108,7 @@ public class BoardService {
 
     //게시판삭제
     public Board deleteBoard(long seq){//board
-        Board board = Board.builder().build();
-        board=boardRepo.findBySeq(seq);//삭제할 글 을 의미 해당 시퀀스 어떤 글인지 조회함.
+        Board board =boardRepo.findBySeq(seq);//삭제할 글 을 의미 해당 시퀀스 어떤 글인지 조회함.
         board.setDel(true);//0->1로바꿔줌.//한 행의 정보 isdel 컬럼을 0->1로 바꿔줌 0이면false, 1이면 true 삭제가 된거
         //게시글 삭제하면 댓글 같이 삭제해야됌.!!여쭤보기
         return boardRepo.save(board);//update db반영됌.

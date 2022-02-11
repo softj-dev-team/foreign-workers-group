@@ -56,9 +56,9 @@ public class BoardController {
     }
     //글 상세 페이지
     @GetMapping("/board/view")//view comment를 추가해줌
-    public String boardView(ModelMap model,ParamVO params) throws Exception{
+    public String boardView(ModelMap model,ParamVO params,Pageable pageable) throws Exception{
         model.addAttribute("view", boardService.boardView(params));
-        model.addAttribute("comment", boardService.boardComent(params));
+        model.addAttribute("comment", boardService.boardComent(params,pageable));
         model.addAttribute("likeCount", boardService.getBoardCount((Board)model.getAttribute("view")));
         model.addAttribute("isMyLike", boardService.isMyLike((Board)model.getAttribute("view")));
         return "sub/board-view";

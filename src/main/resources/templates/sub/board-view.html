@@ -49,7 +49,8 @@
                         <input type="hidden" name="boardSeq" id="boardSeq" th:value="${view.seq}"><!-- 스크립트에서 사용.-->
                     </div>
                    </form>
-                    <div class="comment-view">
+                   <input type="hidden"  id ="userSeq"th:value="${session.loginVO.seq}"> <!--세션에있는 값 가져옴.-->
+                    <div class="comment-view" id="boardView">
                         <div class="comment-mo" th:each="comment : ${comment}">
                             <div class="cmt-out">
                                 <div class="comment-img"></div>
@@ -105,6 +106,7 @@
             // e.preventDefault();
             location.href="/board/list";
         });
+
         /*좋아요 임시하트 기능*/
 
         $('.foot-in a.like').click(function(e){
@@ -191,7 +193,7 @@
         //     });
         //
         // });
-
+        //댓글수정
         function modifyCommet(event,replySeq){/*this랑 시퀀스넘어옴 (댓글수정)*/
             console.log(replySeq);
             let boardSeq = $('#modify').val();
@@ -203,24 +205,70 @@
             });
         };
 
-        function reply() {/*댓글등록 */
+        //댓글등록
+        function reply() {
             let formData = $("#form").serialize();
             $.post('/api/setCommentWrite', formData, function (Response) {
                 location.reload();
             });
         };
 
-        $(function(){
+        $(function() {
             /* 2.init*/
-          $("#modify").click(function() {
+            $("#modify").click(function () {
                 let seq = $('#modify').val();
-                location.href = "/board/openWrite?seq="+seq;
+                location.href = "/board/openWrite?seq=" + seq;
                 /* 3. event listener*/
-
             });
 
-
-         });
+             var page = 0; //0페이지부터
+                //스크롤 할때 이벤트 감지 게시글을 ajax통해
+                $(window).scroll(function () {
+                    let seq = $('#modify').val(); //어느 글인지 알기 위해서
+                    //만약 스크롤 끝까지 내렸으면
+                    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                        page++;
+                        console.log('다음페이지!! pageNumber: ', page);
+                        $.post('/api/getCommentPage', {page: page, seq: seq}, function (Response) {
+                            console.log('response',Response);
+                            var data = Response.data.content;// console에 data에 찍힌content //전체데이터담겨있음
+                            var html = "";
+                            //반복문 밑에서 가져옴
+                            //for(var i=0; i<array.length; i++) ->for(var i in array)
+                            if (data.length > 0) {
+                                for (var el of data) { //값이 el에 하나하나 담겨있음 el=i번째 인덱스 그 길이는 data만큼
+                                    html += '<div class="comment-mo">'
+                                    html += '<div class="cmt-out">'
+                                    html += '<div class="comment-img"></div>'
+                                    html += '<div class="comment-in">'
+                                    html += '<div class="flexwrap">'
+                                    html += '<div class="com-in-t">'+el.user.nickname+'</div>'
+                                    html += '<div class="comment-btn-box">'
+                                    if (el.user.seq == $('#userSeq').val()) {//user를 hidden로 숨겨넣고 가져옴
+                                        html += '<button type="button" class="modify-btn" value="'+el.seq+'"></button>'
+                                        html += '<button type="button" class="del-btn" value="'+el.seq+'"></button>'
+                                    }
+                                    html += '</div>'
+                                    html += '</div>'
+                                    html += '<div class="com-con">'+el.content+'</div>'
+                                    html += '<div class="list-f">'
+                                    html += '<span class="time"></span>'
+                                    html += '</div>'
+                                    html += '<div class="comment-box cmt-modify">'
+                                    html += '<input type="text" name="comment" id="textContent" placeholder="comment">'
+                                    html += '<button class="mod-close"></button>'
+                                    html += '<button type="button" class="com-btn">submit</button>'
+                                    html += '</div>'
+                                    html += '</div>'
+                                    html += '</div>'
+                                    html += '</div>'
+                                };
+                                $("#boardView").append(html);
+                            };
+                        });
+                    };
+                });
+            });
 
 
     </script>
