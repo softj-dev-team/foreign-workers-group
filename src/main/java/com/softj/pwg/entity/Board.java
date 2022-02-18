@@ -20,6 +20,10 @@ public class Board extends Auditing{
 //    @Column(name="user_seq")
 //    private long userSeq;
 
+    //조회수 로직
+    public void increaseViewCount(){
+        this.views++;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_seq")

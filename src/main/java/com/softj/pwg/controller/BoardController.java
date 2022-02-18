@@ -7,6 +7,8 @@ import com.softj.pwg.util.AuthUtil;
 import com.softj.pwg.vo.ParamVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,22 +42,30 @@ public class BoardController {
         AuthUtil.validate();
         return "redirect:/login";
     }
-
+    //글 리스트
     @GetMapping("/board/list")//보드리스트 세션에 값이 담겨있어야함. 보드리스트에 바로 담겨있질 못하니깐
-    public String boardList(ModelMap model, ParamVO params, Pageable pageable) throws Exception{ //modelandview랑 같은형식.
+    public String boardList(ModelMap model, ParamVO params,
+                            @PageableDefault(size = 20, sort = "seq", direction = Sort.Direction.DESC) Pageable pageable) throws Exception{ //modelandview랑 같은형식.
         model.addAttribute("list", boardService.boardList(params,pageable));
+        model.addAttribute("nationName",AuthUtil.getAttr("nationName"));
+
         //list이름으로 view 페이지 사용가능
 
         //nation 값도 있고,
         return "sub/board-list";
     }
-    @GetMapping("/board/view")
-    public String boardView(ModelMap model,ParamVO params) throws Exception{
+    //글 상세 페이지
+    @GetMapping("/board/view")//view comment를 추가해줌
+    public String boardView(ModelMap model,ParamVO params,Pageable pageable) throws Exception{
         model.addAttribute("view", boardService.boardView(params));
-        model.addAttribute("comment", boardService.boardComent(params));
+        model.addAttribute("comment", boardService.boardComent(params,pageable));
+        model.addAttribute("likeCount", boardService.getBoardCount((Board)model.getAttribute("view")));
+        model.addAttribute("isMyLike", boardService.isMyLike((Board)model.getAttribute("view")));
+        model.addAttribute("nationName",AuthUtil.getAttr("nationName"));
         return "sub/board-view";
     }
 
+    // 글 쓰기, 글 수정 폼으로 가는 곳
     @GetMapping("/board/openWrite")
     public String boardOpenWrite(ModelMap model,ParamVO params) throws Exception{
         Board view = Board.builder().build();

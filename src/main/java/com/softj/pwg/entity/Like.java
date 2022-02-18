@@ -10,13 +10,11 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "like")
+@Table(name = "likes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Like extends Auditing{
-
-
     @ManyToOne
     @JoinColumn(name = "user_seq")
     private User user;

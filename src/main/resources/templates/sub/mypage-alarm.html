@@ -5,91 +5,79 @@
     <div class="wrap2">
         <div class="my-header">
             <div class="hd-in">
-                <a href="mypage-board.html" class="mypage-b"></a>
-                <a href="mypage-alarm.html" class="mypage-a on"></a>
-                <a href="mypage-like.html" class="mypage-l"></a>
+                <a href="/mypage/board" class="mypage-b"></a>
+                <a href="/mypage/alarm" class="mypage-a on"></a>
+                <a href="/mypage/like" class="mypage-l"></a>
             </div>
         </div>
-        <div class="board-wrap my-board clearfix">
-            <div class="board-list">
-                <div class="list-in clearfix">
-                    <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                    <div class="list-t">
-                        <div class=" clearfix">
-                            <a href="" class="ellipsis ">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                        </div>
-                        <div class="list-f">
-                            <span class="name">name</span>
-                            <span class="time">14:23</span>
-                            <span class="view">121,103</span>
-                        </div>
-                    </div>
-                    <div class="cmt">
-                        <span>1</span>
-                    </div>
-                </div>
-            </div>
-            <div class="board-list">
-                 <div class="list-in clearfix">
-                     <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                     <div class="list-t">
-                         <div class=" clearfix">
-                             <a href="" class="ellipsis ">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                         </div>
-                         <div class="list-f">
-                             <span class="name">name</span>
-                             <span class="time">14:23</span>
-                             <span class="view">121,103</span>
-                         </div>
-                     </div>
-                     <div class="cmt">
-                         <span>1</span>
-                     </div>
-                 </div>
-             </div>
-             <div class="board-list">
-                 <div class="list-in clearfix">
-                     <div class="list-t">
-                         <div class=" clearfix">
-                             <a href="" class="ellipsis ">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                         </div>
-                         <div class="list-f">
-                             <span class="name">name</span>
-                             <span class="time">14:23</span>
-                             <span class="view">121,103</span>
-                         </div>
-                     </div>
-                     <div class="cmt">
-                         <span>999</span>
-                     </div>
-                 </div>
-             </div>
-             <div class="board-list">
-                <div class="list-in clearfix">
-                    <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                    <div class="list-t">
-                        <div class=" clearfix">
-                            <a href="" class="ellipsis ">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                        </div>
-                        <div class="list-f">
-                            <span class="name">name</span>
-                            <span class="time">14:23</span>
-                            <span class="view">121,103</span>
-                        </div>
-                    </div>
-                    <div class="cmt">
-                        <span>1</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+        <div class="board-wrap my-board clearfix" id="boardList">
+
         </div>
         <div class="sub-footer">
             <div class="foot-in">
-                <a href="" class="back-f back-btn">Back</a>
+                <a href="/mypage/alarm" class="back-f back-btn">Back</a>
                 <a href="" class="invite">Invite</a>
                 <a href="" class="logout">Logout</a>
             </div>
         </div>
     </div>
+
+    <script>
+        $(function(){
+            var isLast = false;
+            var page = 0; //0페이지부터
+            getPage();
+            //스크롤 할때 이벤트 감지 게시글을 ajax통해
+            $(window).scroll(function() {
+                if (isLast) {
+                    return;
+                }
+                //만약 스크롤 끝까지 내렸으면
+                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                    getPage();
+                };
+            });
+
+            function getPage() {
+                $.post('/api/getCommentPage',{ page: page++, isMyCommentPage:true},function(Response) {
+                    console.log(Response);
+                    isLast = Response.data.last;
+                    var data = Response.data.content;// console에 data에 찍힌content
+                    var html = "";
+                    //데이터 수만큼 반복문 돌리는거 그 이름을 el로 받음.
+                    // if (returnData.startNum<=returnData.totCnt){
+                    if(data.length>0){
+                        //loading(1);
+                        console.log(data);
+                        for (var el of data) {
+                            html += `
+                             <div class="board-list">
+                                <div class="list-in clearfix">
+                                    <div class="list-t">
+                                        <div class=" clearfix">
+                                            <a href="/board/view?seq=${el.board.seq}" class="ellipsis ">
+                                                 ${el.content}
+                                            </a>
+                                        </div>
+                                        <div class="list-f" >
+                                            <span class="name">${el.user.nickname}</span>
+                                            <span class="time">${el.createdAt}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `
+                        }
+
+                        $("#boardList").append(html);
+
+                    }else{
+                        //데이터가 없을경우
+                    }
+                });
+            }
+        });
+
+    </script>
 </th:block>
