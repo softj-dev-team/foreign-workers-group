@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface LikeRepo extends JpaRepository<Like, Long>, QuerydslPredicateExecutor<Like> {
     long countByBoard(Board board);
-    Like findByBoardAndUser(Board board,User user);
+        Like findByBoardAndUser(Board board,User user);
 }

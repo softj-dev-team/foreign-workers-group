@@ -6,7 +6,7 @@
         <div class="header">
             <div class="hd-in">
                 <a href="/" class="home"></a>
-                <span class="title">"${nationName}" friends, gather up!</span>
+                <span class="title"> [[${nationName}]] friends, gather up!</span>
                 <a href="/mypage/alarm" class="mypage"><span class="new-R"></span></a>
             </div>
         </div>
@@ -41,15 +41,23 @@
     </div>
 
     <script>
+
+        var isLast = false;
+
         $(function(){
             var page = 0; //0페이지부터
 
             //스크롤 할때 이벤트 감지 게시글을 ajax통해
             $(window).scroll(function() {
+                if (isLast) {
+                    return;
+                }
                 //만약 스크롤 끝까지 내렸으면
                 if ($(window).scrollTop() == $(document).height() - $(window).height()) {
                     page++;
                     $.post('/api/getPage',{page:page},function(Response) {
+                        isLast = Response.data.last;
+                        $('#resultCount').text(Response.data.totalElements);
                         console.log(Response);
                         var data = Response.data.content;// console에 data에 찍힌content
                         var html = "";

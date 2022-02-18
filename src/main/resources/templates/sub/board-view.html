@@ -6,7 +6,7 @@
         <div class="header">
             <div class="hd-in">
                 <a href="javascript: void(0);" class="back back-btn"></a>
-                <span class="title">Vietnamese friends, gather up!</span>
+                <span class="title"> [[${nationName}]] friends, gather up!</span>
                 <a href="" class="mypage"></a>
             </div>
         </div>
@@ -104,7 +104,7 @@
         /*조회수증가 뒤로가기했을때도 적용되겠금*/
         $('.back-btn').click(function(e){
             // e.preventDefault();
-            location.href="/board/list";
+            history.back();
         });
 
         /*좋아요 임시하트 기능*/
@@ -221,9 +221,13 @@
                 /* 3. event listener*/
             });
 
-             var page = 0; //0페이지부터
+            var isLast = false;
+            var page = 0; //0페이지부터
                 //스크롤 할때 이벤트 감지 게시글을 ajax통해
                 $(window).scroll(function () {
+                    if (isLast) {
+                        return;
+                    }
                     let seq = $('#modify').val(); //어느 글인지 알기 위해서
                     //만약 스크롤 끝까지 내렸으면
                     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
@@ -231,6 +235,7 @@
                         console.log('다음페이지!! pageNumber: ', page);
                         $.post('/api/getCommentPage', {page: page, seq: seq}, function (Response) {
                             console.log('response',Response);
+                            isLast = Response.data.last;
                             var data = Response.data.content;// console에 data에 찍힌content //전체데이터담겨있음
                             var html = "";
                             //반복문 밑에서 가져옴

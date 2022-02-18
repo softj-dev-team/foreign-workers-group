@@ -25,7 +25,6 @@ public class Board extends Auditing{
         this.views++;
     }
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "user_seq")
     private User user;

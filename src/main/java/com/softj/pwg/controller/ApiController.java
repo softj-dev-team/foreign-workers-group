@@ -43,6 +43,7 @@ public class ApiController {
     @PostMapping("/setNation")//보드리스트
     public void setNation(ParamVO params) {
         AuthUtil.setAttr("nation", params.getNation()); //param에서 값가져옴
+        AuthUtil.setAttr("nationName",params.getNationName());//세션에 저장하는거.
 
     }
     //글 작성, 글 수정 완료 db 등록
@@ -80,7 +81,7 @@ public class ApiController {
                 .data("OK")
                 .build();
     }
-    @PostMapping("/getPage") //페이징
+    @PostMapping("/getPage") //게시글페이징.
     public Response getPage(ParamVO params,Pageable pageable) {
         return Response.builder()
                 .data(boardService.boardList(params,pageable))
@@ -94,4 +95,13 @@ public class ApiController {
                 .build();
 
     }
+
+//    @PostMapping("/getPageMyLike") //내가 좋아요 한글
+//    public Response getPageMyLike(Pageable pageable) {
+//        return Response.builder()
+//                .data(boardService.boardListByMyLike(pageable))
+//                .build();
+//
+//    }
+
 }

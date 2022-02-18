@@ -15,8 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Like extends Auditing{
-
-
     @ManyToOne
     @JoinColumn(name = "user_seq")
     private User user;

@@ -1,6 +1,7 @@
 package com.softj.pwg.service;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.softj.pwg.entity.*;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import javax.xml.stream.events.Comment;
 import java.util.List;
@@ -33,12 +35,26 @@ public class BoardService {
     public Page<Board> boardList(ParamVO params, Pageable pageable) {
 
         QBoard qBoard = QBoard.board; //앤티티 가져온거
+        QComent qComent = QComent.coment;
         BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
         where.and(qBoard.nation.eq((String) AuthUtil.getAttr("nation"))); //해당 카테고리 글만 보여지게.
         where.and(qBoard.isDel.eq(false));//삭제 처리가 안된글만 0이면은
-//        if (params.getSearch() != null) {//검색어가 있으면 LIKE 추가
-//            where.and(qBoard.subject.like(params.getSearch()));
-//        }
+        if (!StringUtils.isEmpty(params.getSearch())) {//검색어가 있으면 LIKE 추가
+            where.and(qBoard.subject.contains(params.getSearch()));
+            where.and(qBoard.content.contains(params.getSearch()));
+        }
+        if (params.isMyWritePage()) {//내가쓴글 알람 (서비스까지 구현완료)
+            where.and(qBoard.user.eq((User)AuthUtil.getAttr("loginVO")));
+        }
+        if (params.isMyCommentPage()) {//내가 쓴글에 댓글 (서비스까지 구현 완료)
+            where.and(JPAExpressions.selectFrom(qComent).where(qComent.board.eq(qBoard)).exists());
+            //서브쿼리
+        }
+        if (params.isMyLikePage()) {//(서비스 구현해야하고 jpql로 변환해야함.)
+
+            //invite 실제 링크 복사되겠금 구현하는거
+        }
+
         JPAQuery<Board> query = jpaQueryFactory
                                 .selectFrom(qBoard)
                                 .join(qBoard.user)
@@ -47,9 +63,19 @@ public class BoardService {
                                 .orderBy(qBoard.seq.desc())
                                 .limit(pageable.getPageSize())//조회할 개수 지정
                                 .offset(pageable.getOffset());//시작index지정offset
+
+//        List<Board> list = query.fetch();
+//        long count = query.fetchCount();
+
         return new PageImpl<Board>(query.fetch(), pageable, query.fetchCount());
 
     }
+    //
+//    public Page<Board> boardListByMyLike(Pageable pageable) {
+//        PageImpl<Board> list=boardRepo.findAllByLikeUser((User) AuthUtil.getAttr("loginVO"),pageable);
+//        return list;
+//    }
+
     //조회수
     public Board boardView(ParamVO params) { //글 상세 보여주는 메서드
         Board board = boardRepo.findBySeq(params.getSeq());
@@ -60,11 +86,14 @@ public class BoardService {
     public Page<Coment> boardComent(ParamVO params,Pageable pageable) {
         //댓글 목록 조회하는 메서드<삭제안된 댓글만 조회해야 함.어떤글에 어떤 댓글 구현해야 하는지.>
         QComent qComent=QComent.coment;
-        AuthUtil.getAttr("loginVO");
+        User user = (User)AuthUtil.getAttr("loginVO");
         BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
-        where.and(qComent.board.seq.eq(params.getSeq())); //어느 글에 누가 댓글 달았는지 알기위해서 게시글 시퀀스
-        where.and(qComent.isDel.eq(false));//삭제 처리가 안된글만 0이면은
-
+        if(params.isMyCommentPage()) { //mypage에서 들어온거
+            where.and(qComent.board.user.eq(user));//userseq조회를 하는거.
+        }else{//boardView 상세페이지에서 들어온거
+            where.and(qComent.board.seq.eq(params.getSeq()));//특정게시글에 댓글만 조회하기 위한거.
+        }
+        where.and(qComent.isDel.eq(false));//삭제 처리가 안된글만 0이면은.
         JPAQuery<Coment> query = jpaQueryFactory
                 .selectFrom(qComent)
                 .join(qComent.user)
@@ -109,9 +138,8 @@ public class BoardService {
     //게시판삭제
     public Board deleteBoard(long seq){//board
         Board board =boardRepo.findBySeq(seq);//삭제할 글 을 의미 해당 시퀀스 어떤 글인지 조회함.
-        board.setDel(true);//0->1로바꿔줌.//한 행의 정보 isdel 컬럼을 0->1로 바꿔줌 0이면false, 1이면 true 삭제가 된거
-        //게시글 삭제하면 댓글 같이 삭제해야됌.!!여쭤보기
-        return boardRepo.save(board);//update db반영됌.
+        board.setDel(true);
+        return boardRepo.save(board);
     }
     //댓글삭제
     public Coment deleteComment(long seq){ //어느 게시글에 한 댓글이 삭제되는건데 댓글을 전체 삭제 해야하니깐.그것도 여쭤봐야함
