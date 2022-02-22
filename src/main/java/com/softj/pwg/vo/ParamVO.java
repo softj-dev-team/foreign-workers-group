@@ -18,28 +18,7 @@ public class ParamVO {
     private String subject;
     private long views;
     private String search;
-    private Boolean isMyWritePage;
-    private Boolean isMyCommentPage;
-    private Boolean isMyLikePage;
-
-    public Boolean isMyWritePage() {
-        if (Objects.isNull(isMyWritePage)) {//참조형으로바꿔줄때
-            return Boolean.FALSE;
-        }
-        return isMyWritePage;
-    }
-
-    public Boolean isMyCommentPage() {
-        if (Objects.isNull(isMyCommentPage)) {
-            return Boolean.FALSE;
-        }
-        return isMyCommentPage;
-    }
-
-    public Boolean isMyLikePage() {
-        if (Objects.isNull(isMyLikePage)) {
-            return Boolean.FALSE;
-        }
-        return isMyLikePage;
-    }
+    private boolean isMyWritePage;
+    private boolean isMyCommentPage;
+    private boolean isMyLikePage;
 }

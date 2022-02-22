@@ -7,7 +7,7 @@
             <div class="hd-in">
                 <a href="javascript: void(0);" class="back back-btn"></a>
                 <span class="title"> [[${nationName}]] friends, gather up!</span>
-                <a href="" class="mypage"></a>
+                <a href="/mypage/alarm" class="mypage"></a>
             </div>
         </div>
         <div class="board-wrap clearfix">
@@ -94,9 +94,9 @@
         </div>
         <div class="sub-footer">
             <div class="foot-in">
-                <a href="" class="back-f back-btn">Back</a>
-                <a href="" class="like" id="likeBtn" th:classappend="${isMyLike ? 'on' : ''}">Like</a>
-                <a href="" class="share">Share</a>
+                <a href="/board/list" class="back-f back-btn">Back</a>
+                <a href="javascript:void(0)" class="like" id="likeBtn" th:classappend="${isMyLike ? 'on' : ''}">Like</a>
+                <a href="javascript:copy()" class="share">Share</a>
             </div>
         </div>
     </div>
@@ -131,10 +131,7 @@
         $('.cmt-btn').click(function(){
             $(this).parent().parent().children('.cmt-modify').toggleClass('on');
             $('.cmt-modify input').focus();
-        }) /*삭제*/
-        $(document).on('click','.view-comment .del-btn', function () {
-            $(this).parent().parent().parent().parent().remove();
-        });
+        })
         $('.mod-close').click(function(){
             $(this).parent().removeClass('on');
         });
@@ -175,14 +172,14 @@
             });
         });
 
-            /*댓글삭제*/
+        /*댓글삭제*/
         $(document).on('click','.view-comment .del-btn', function() {  /*'.view-comment*/
             var replySeq = $(this).val();/* 해당댓글 선택*/
-            if(confirm("삭제?")){
+            modal.confirm("delete?",'ok',function(){
                 $.post('/api/setRemoveComent' , {seq:replySeq},function (Response) {
                     location.reload();
                 });
-            }
+            });
         });
 
         // $(document).on('click','.modify-btn',function (){
@@ -274,8 +271,6 @@
                     };
                 });
             });
-
-
     </script>
 
 </th:block>

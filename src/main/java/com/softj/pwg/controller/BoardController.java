@@ -36,6 +36,11 @@ public class BoardController {
         return "sub/login";
     }
 
+    @GetMapping("/appleOauth")
+    public String appleOauth() throws Exception{
+        return "redirect:/";
+    }
+
     //로그아웃
     @GetMapping("/logout")
     public String logout(){

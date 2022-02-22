@@ -13,14 +13,14 @@
         <div class="board-wrap my-board clearfix" id="boardList">
 
         </div>
+    </div>
+    <div class="sub-footer">
+        <div class="foot-in">
+            <a href="/board/list" class="back-f back-btn">Back</a>
+            <a href="javascript:copy();" class="invite">Invite</a>
+            <a href="/logout" class="logout">Logout</a>
         </div>
-        <div class="sub-footer">
-            <div class="foot-in">
-                <a href="" class="back-f back-btn">Back</a>
-                <a href="" class="invite">Invite</a>
-                <a href="" class="logout">Logout</a>
-            </div>
-        </div>
+    </div>
     </div>
     <script>
         $(function(){
@@ -39,7 +39,7 @@
             });
 
             function getPage() {
-                $.post('/api/getPageMyLike',{ page: page++ ,isMyLikePage:true},function(Response) {
+                $.post('/api/getPage',{ page: page++ ,myLikePage:true},function(Response) {
                     console.log(Response);
                     isLast = Response.data.last;
                     var data = Response.data.content;// console에 data에 찍힌content
@@ -47,8 +47,6 @@
                     //데이터 수만큼 반복문 돌리는거 그 이름을 el로 받음.
                     // if (returnData.startNum<=returnData.totCnt){
                     if(data.length>0){
-                        //loading(1);
-                        console.log(data);
                         for (var el of data) {
                             html += `
                             <div class="board-list">
@@ -66,7 +64,7 @@
                                         </div>
                                     </div>
                                     <div class="cmt">
-                                        <span>24</span>
+                                        <span>${el.likeCount}</span>
                                     </div>
                                 </div>
                             </div>
@@ -77,9 +75,11 @@
 
                     }else{
                         //데이터가 없을경우
+
                     }
                 });
             }
         });
+
     </script>
 </th:block>

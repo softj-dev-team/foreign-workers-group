@@ -7,7 +7,7 @@
             <div class="hd-in">
                 <a href="/" class="home"></a>
                 <span class="title"> [[${nationName}]] friends, gather up!</span>
-                <a href="/mypage/alarm" class="mypage"><span class="new-R"></span></a>
+                <a href="/mypage/alarm" class="mypage"><!--<span class="new-R"></span>--></a>
             </div>
         </div>
         <div class="board-wrap clearfix" id="boardList">
@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="cmt">
-                        <span>1</span>
+                        <span th:text="${el.likeCount}"></span>
                     </div>
                 </div>
             </div>
@@ -35,7 +35,7 @@
             <div class="foot-in">
                 <a href="/search" class="search">Search</a>
                 <a href="/board/openWrite" class="writing">Writing</a>
-                <a href="" class="invite">Invite</a>
+                <a href="javascript:copy()" class="invite">Invite</a>
             </div>
         </div>
     </div>
@@ -65,7 +65,6 @@
                        // if (returnData.startNum<=returnData.totCnt){
                             if(data.length>0){
                                 //loading(1);
-                                console.log(data);
                                 for (var el of data) {
                                     html+='<div class="board-list">'
                                     html+='<div class="list-in clearfix">'
@@ -80,7 +79,7 @@
                                     html+='</div>'
                                     html+='</div>'
                                     html+='<div class="cmt">'
-                                    html+='<span>1</span>'
+                                    html+='<span>'+el.likeCount+'</span>'
                                     html+='</div>'
                                     html+='</div>'
                                     html+='</div>'

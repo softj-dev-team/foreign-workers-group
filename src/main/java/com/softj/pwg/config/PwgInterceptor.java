@@ -13,13 +13,14 @@ public class PwgInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         User u = AuthUtil.getLoginVO();
-        if(Objects.isNull(u)){
+        if(Objects.isNull(u)) {
             response.sendRedirect("/login");
             return false;
-        }else if(request.getRequestURI().contains("mypage") && StringUtils.isEmpty(u.getId())){
-            response.sendRedirect("/");
-            return false;
         }
+//        }else if(request.getRequestURI().contains("mypage") && StringUtils.isEmpty(u.getId())){
+//            response.sendRedirect("/board/list");
+//            return false;
+//        }
         return super.preHandle(request, response, handler);
     }
 }

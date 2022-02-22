@@ -1,10 +1,9 @@
 <html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
 <head>
-    <!--구글 api 사용을 위한 스크립트-->
-    <meta name ="google-signin-client_id" content="733678719087-6gm0ddtjee4vnqa3d6p0cf970dp99kvl.apps.googleusercontent.com">
-
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!-- content에 자신의 OAuth2.0 클라이언트ID를 넣습니다. -->
+    <meta name ="google-signin-client_id" content="733678719087-acn101472hp6flg8es71ldup7qu0l7li.apps.googleusercontent.com">
 </head>
 <th:block layout:fragment="layout-content">
     <div class="wrap2">
@@ -21,9 +20,9 @@
 <!--                        onlogin="checkLoginState();">-->
 <!--                </fb:login-button>-->
 
-                <button type="button" class="facebookbtn" id="facebook"><i class="fb-i"></i>Log In With Facebook</button>
+                <button type="button" class="facebookbtn" id="facebook" onclick="fnFbCustomLogin()"><i class="fb-i"></i>Log In With Facebook</button>
                 <button type="button" class="googlebtn" id="google"><i class="gg-i"></i>Log In With Google</button>
-                <button type="button" class="applebtn"><i class="ap-i"></i>Log In With  Apple</button>
+                <button type="button" class="applebtn" onclick="popAppleLogin();"><i class="ap-i"></i>Log In With  Apple</button>
             </div>
             <div class="orbox">
                 <div class="or">OR</div>
@@ -45,14 +44,20 @@
         /* 1. on load */
         $(function(){
             /* 2.init*/
-            init();
+            setTimeout(()=>{
+                gapi.load('auth2', function() {
+                    gapi.auth2.init();
+                    options = new gapi.auth2.SigninOptionsBuilder();
+                    options.setPrompt('select_account');
+                    // 추가는 Oauth 승인 권한 추가 후 띄어쓰기 기준으로 추가
+                    options.setScope('email profile openid https://www.googleapis.com/auth/user.birthday.read');
+                    // 인스턴스의 함수 호출 - element에 로그인 기능 추가
+                    // GgCustomLogin은 li태그안에 있는 ID, 위에 설정한 options와 아래 성공,실패시 실행하는 함수들
+                    gapi.auth2.getAuthInstance().attachClickHandler('google', options, onSignIn, onSignInFailure);
+                });
+            },500);
 
             /* 3. event listener*/
-            $("#facebook").click(function(){ //페이스북 버튼을 클릭하면
-                    facebookLogin();
-
-                    //1.클릭이벤트->2. 로그인하는거
-            });
 
         })
 
@@ -83,88 +88,37 @@
             }
             $.post('/api/login',{nickname: nickname},function(res){
                 ut.redirect("/");
-            });//밑에 ajax랑 똑같이 사용해 주면 된다.
-
-            /*$.ajax({
-                type : "POST",            // HTTP method type(GET, POST) 형식이다.
-                url : '/api/anonymousLogin',      // 컨트롤러에서 대기중인 URL 주소이다.
-                data : {nickname: nickname},            // Json 형식의 데이터이다.
-                success : function(res){
-                    ut.redirect("/");
-                }
-            });*/
+            });
         }
     </script>
-
+    <!--페이스북-->
     <script>
+        function fnFbCustomLogin(){
+            FB.login(function(response) {
+                if (response.status === 'connected') {
+                    FB.api('/me', 'get', {fields: 'name,email'}, function(r) {
+                        $.post('/api/login',{id: r.id,platform:"facebook"},function(res){
+                            ut.redirect("nickName");
+                        });
+                    })
+                }
+            }, {scope: 'public_profile,email'});
+        }
+
         window.fbAsyncInit = function() {
             FB.init({
-                appId      : '961134184788407',
-                cookie     : true,
-                xfbml      : true,
-                version    : 'v12.0'
+                appId            : '364752415197770',
+                autoLogAppEvents : true,
+                xfbml            : true,
+                version          : 'v13.0'
             });
-
-            FB.getLoginStatus(function(response) {
-                statusChangeCallback(response);
-
-            });
-            //FB.AppEvents.logPageView();
         };
-
-        //로그인 상태에 따라 로그인 /
-        // const statusChangeCallback = (res)=>{
-        //     if(res.status === 'connected')
-        //         alert("로그인성공");
-        //
-        //
-        // }
-
-        //페이스북 (로그인)
-        const facebookLogin = ()=>{
-            //로그인 정보 GET
-            FB.login((res)=>{
-                //사용자 정보 GET
-                FB.api(//페이스북api
-                    `/${res.authResponse.userID}/`,//결과값이res2에 담김
-                    'GET',
-                    {"fields":"id,name,email"},//id,name,email,사진등등..
-                    (res2) => {
-                        //res.authResponse.accessToken : 엑세스 토큰
-                        //res.authResponse.graphDomain : 공급자 (페이스북)
-                        //res.authResponse.userID : 유저 아이디 구분 (숫자)
-                        //res2.name : 유저 이름
-                        //res2.email : 유저 이메일 정보
-                        //document.querySelector('#logBtn').value="로그아웃";
-                        console.log(res,res2);
-                        $.post('/api/login',{id: res2.id,platform:"facebook"},function(res){
-                            ut.redirect("nickName");
-                        });//밑에 ajax랑 똑같이 사용해 주면 된다.
-                    });
-            });
-
-        }
-
-
-
-        (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-
-
-        // FB.getLoginStatus(function(response) {
-        //     statusChangeCallback(response);
-        // }); //로그인 상태확인.
-
-
     </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+    <!--구글-->
     <script>
-        //처음 실행하는 함수
-        function init() {
+        window.onLoad = function(){
             gapi.load('auth2', function() {
                 gapi.auth2.init();
                 options = new gapi.auth2.SigninOptionsBuilder();
@@ -174,36 +128,66 @@
                 // 인스턴스의 함수 호출 - element에 로그인 기능 추가
                 // GgCustomLogin은 li태그안에 있는 ID, 위에 설정한 options와 아래 성공,실패시 실행하는 함수들
                 gapi.auth2.getAuthInstance().attachClickHandler('google', options, onSignIn, onSignInFailure);
-            })
-        }
-        function onSignIn(googleUser) {
-            $.post('/api/login',{id: googleUser.yu.nv,platform:"google"},function(res){
-                console.log("dfsd"); // 콘솔찍은다음에
-                ut.redirect("nickName");
             });
+        }
 
-            // var access_token = googleUser.getAuthResponse().access_token
-            // $.ajax({
-            //     // people api를 이용하여 프로필 및 생년월일에 대한 선택동의후 가져온다.
-            //     url: 'https://people.googleapis.com/v1/people/me'
-            //     // key에 자신의 API 키를 넣습니다.
-            //     , data: {personFields:'birthdays', key:'AIzaSyDpiDBcW6vMNRnnyKLQUzzH-MocouQOn14', 'access_token': access_token}
-            //     , method:'POST'
-            // }).done(function(e){
-            //         //프로필을 가져온다.
-            //         var profile = googleUser.getBasicProfile();
-            //         console.log(profile)
-            //         $.post('/api/login',{id: res2.id,platform:"google"},function(res){
-            //             ut.redirect("nickName");
-            //         });//밑에 ajax랑 똑같이 사용해 주면 된다.
-            // }).fail(function(e){
-            //     console.log(e);
-            //})
-
+        function onSignIn(googleUser) {
+            var access_token = googleUser.getAuthResponse().access_token
+            $.ajax({
+                url: 'https://people.googleapis.com/v1/people/me'
+                , data: {personFields:'birthdays', key:'AIzaSyBvLUXYQE80c8qO_XuuFh5IJ1kiXsQ2MxE', 'access_token': access_token}
+                , method:'GET'
+            })
+            .done(function(e){
+                //프로필을 가져온다.
+                var profile = googleUser.getBasicProfile();
+                $.post('/api/login',{id: profile.SW, platform:"google"},function(res){
+                    ut.redirect("nickName");
+                });
+            })
+            .fail(function(e){
+                console.log(e);
+            })
         }
 
         function onSignInFailure(t){
             console.log(t);
+        }
+    </script>
+    <!-- 애플 -->
+    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+    <script type="text/javascript">
+        AppleID.auth.init({
+            clientId : 'com.forforeignworkers.pwg',
+            scope : 'name email',
+            redirectURI : 'https://forforeignworkers.com/login',
+            state : 'pwgCSRF',
+            nonce : '[NONCE]',
+            usePopup : true
+        });
+
+        async function getAppleUser() {
+            return await AppleID.auth.signIn();
+        }
+
+        function popAppleLogin(){
+            getAppleUser()
+            .then(appleUser => {
+                let payload = parseJwt(appleUser.authorization.id_token);
+                $.post('/api/login',{id: payload.email ,platform:"apple"},function(res){
+                    ut.redirect("nickName");
+                });
+            })
+
+            function parseJwt (token) {
+                var base64Url = token.split('.')[1];
+                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                return JSON.parse(jsonPayload);
+            };
         }
     </script>
 

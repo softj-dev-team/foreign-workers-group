@@ -10,19 +10,18 @@
                 <a href="/mypage/like" class="mypage-l"></a>
             </div>
         </div>
-
         <div class="board-wrap my-board clearfix" id="boardList">
 
         </div>
-        <div class="sub-footer">
-            <div class="foot-in">
-                <a href="/mypage/alarm" class="back-f back-btn">Back</a>
-                <a href="" class="invite">Invite</a>
-                <a href="" class="logout">Logout</a>
-            </div>
+    </div>
+    <div class="sub-footer">
+        <div class="foot-in">
+            <a href="/board/list" class="back-f back-btn">Back</a>
+            <a href="javascript:copy();" class="invite">Invite</a>
+            <a href="/logout" class="logout">Logout</a>
         </div>
     </div>
-
+    </div>
     <script>
         $(function(){
             var isLast = false;
@@ -40,23 +39,20 @@
             });
 
             function getPage() {
-                $.post('/api/getCommentPage',{ page: page++, isMyCommentPage:true},function(Response) {
-                    console.log(Response);
+                $.post('/api/getCommentPage',{ page: page++ ,myCommentPage:true},function(Response) {
                     isLast = Response.data.last;
                     var data = Response.data.content;// console에 data에 찍힌content
                     var html = "";
                     //데이터 수만큼 반복문 돌리는거 그 이름을 el로 받음.
                     // if (returnData.startNum<=returnData.totCnt){
                     if(data.length>0){
-                        //loading(1);
-                        console.log(data);
                         for (var el of data) {
                             html += `
-                             <div class="board-list">
+                            <div class="board-list">
                                 <div class="list-in clearfix">
                                     <div class="list-t">
                                         <div class=" clearfix">
-                                            <a href="/board/view?seq=${el.board.seq}" class="ellipsis ">
+                                            <a href="/board/view?seq=${el.seq}" class="ellipsis ">
                                                  ${el.content}
                                             </a>
                                         </div>
@@ -74,6 +70,7 @@
 
                     }else{
                         //데이터가 없을경우
+
                     }
                 });
             }

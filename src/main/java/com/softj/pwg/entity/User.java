@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "user")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder
 public class User extends Auditing{

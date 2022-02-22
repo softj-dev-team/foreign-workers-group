@@ -117,3 +117,7 @@ function loading(isShow){
         $("div.loading").removeClass("on");
     }
 }
+function copy(url){
+    ut.copyStr(url ? url : location.href);
+    modal.alert("copy complete!");
+}

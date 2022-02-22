@@ -32,6 +32,8 @@ public class Board extends Auditing{
 //    @OneToMany(mappedBy = "board")
 //    private List<Coment> coment;
 
+    @Transient
+    private long likeCount;
 }
 
 

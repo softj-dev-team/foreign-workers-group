@@ -5,218 +5,103 @@
     <div class="wrap2">
         <div class="header white">
             <div class="hd-in">
-               <a href="" class="back back-btn"></a>
+               <a href="/board/list" class="back back-btn"></a>
                 <p class="subtitle">SEARCH</p>
             </div>
         </div>
         <div class="board-wrap clearfix">
             <div class="srh-box">
-                <input type="text" class="srhinput">
+                <input type="text" class="srhinput" name="search">
                 <button type="button" class="clear" onclick="inputclear();"></button>
-                <button type="button" class="srhbtn"></button>
+                <button type="button" class="srhbtn" onclick="goSearch()"></button>
             </div>
             <div class="resultwrap">
                 <div class="resultinner">
-                    <span class="resultnum">9,999</span> results
+                    <span class="resultnum">0</span> results
                 </div>
                 <div class="noresult">
                     <span>No results</span><br>
                     There were no results. Try a new search.
                 </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="">
-                                    <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
-                                </a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">namenamename</span>
-                                <span class="time">14:23</span>
-                                <span class="new-i">N</span>
-                                <span class="view">121</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>1</span>
-                        </div>
-                    </div>
-               </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="" class="ellipsis"><span class="srh-hlight">Hello</span>, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">name</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>1</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="" class="ellipsis ">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">name</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>1</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="">
-                                    <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question <span class="srh-hlight">here?</span></span>
-                                </a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">namenamename</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>24</span>
-                        </div>
-                    </div>
-               </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="">
-                                    <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
-                                </a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">namenamename</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>24</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="">
-                                    <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
-                                </a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">namenamename</span>
-                                <span class="time">14:23</span>
-                                <span class="new-i">N</span>
-                                <span class="view">121</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>1</span>
-                        </div>
-                    </div>
-               </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="board-img" style="background-image: url(../assets/img/Sweet.png);"></div>
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="" class="ellipsis"><span class="srh-hlight">Hello</span>, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">name</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>1</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="" class="ellipsis ">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">name</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>1</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="">
-                                    <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question <span class="srh-hlight">here?</span></span>
-                                </a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">namenamename</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>24</span>
-                        </div>
-                    </div>
-               </div>
-                <div class="board-list">
-                    <div class="list-in clearfix">
-                        <div class="list-t">
-                            <div class=" clearfix">
-                                <a href="">
-                                    <span class="ellipsis">Hello, nice to meet you. It's my first time signing up here.Do I write the question here?</span>
-                                </a>
-                            </div>
-                            <div class="list-f">
-                                <span class="name">namenamename</span>
-                                <span class="time">14:23</span>
-                                <span class="view">121,103</span>
-                            </div>
-                        </div>
-                        <div class="cmt">
-                            <span>24</span>
-                        </div>
-                    </div>
+                <div class="board-list" id="boardList">
+
                 </div>
             </div>
         </div>
     </div>
     <script>
+        /* 0. variable */
+        let page = 0;
+        let search = '';
+        let isLast = true;
+
+        /* 1. on load */
+        $(function(){
+            init();
+
+            /* 2. event listener*/
+            $(window).scroll(function() {
+                if (!isLast && ($(window).scrollTop() == $(document).height() - $(window).height())) {
+                    getList()
+                }
+            });
+        })
+
+        /* 3.init*/
+        function init(){
+
+        }
+
+        /* 4. function */
         function inputclear(){
             $('.srhinput').val('');
+        }
+
+        function goSearch(){
+            search = $("input[name=search]").val();
+            page = 0;
+            isLast = false;
+            $("#boardList").empty();
+            getList();
+        }
+
+        function getList(){
+            $.post('/api/getPage',{page, search},function(res){
+                page++;
+                let cnt = res.data.totalElements;
+                if(cnt == 0){
+                    $(".noresult").show();
+                }else{
+                    $(".noresult").hide();
+                }
+
+                isLast = res.data.last;
+                $('.resultnum').text(cnt);
+                var list = res.data.content;
+                list.forEach(function(el){
+                   var html =
+                   `
+                   <div class="list-in clearfix">
+                        <div class="list-t">
+                            <div class=" clearfix">
+                                <a href="/board/view?seq=${el.seq}">
+                                    <span class="ellipsis">${el.subject}</span>
+                                </a>
+                            </div>
+                            <div class="list-f">
+                                <span class="name">${el.user.nickname}</span>
+                                <span class="time">${el.createdAt}</span>
+                                <span class="view">${el.views}</span>
+                            </div>
+                        </div>
+                        <div class="cmt">
+                            <span>${el.likeCount}</span>
+                        </div>
+                    </div>
+                   `;
+                    $("#boardList").append(html);
+                });
+            });
         }
     </script>
 </th:block>

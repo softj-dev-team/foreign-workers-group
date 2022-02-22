@@ -121,17 +121,6 @@
                 else $('.file-up-con input').prop('checked',false);
             });
         });
-        $('.ch-remove').click(function(){
-            if(confirm("삭제하시겠습니까?")){
-                $(".file-up-con input[type=checkbox]:checked").each(function(){
-                    var tr_value =$(this).val();
-                    var tr=$("li[file-value='"+tr_value+"']");
-                    tr.remove();
-                });
-            }else{
-                return false;
-            }
-        });
         
     </script>
     <script>
@@ -149,18 +138,17 @@
     /* 4. function */ //메서드만들기.
    function boardWrite() {
        let subject = $('#subject').val();
-       let content =$('#summernote').val();
-       if(subject=='' || content==''){
-           alert('제목과 내용을 입력해주세요');
+       let content = $('#summernote').val();
+       if (subject == '' || content == '') {
+           modal.alert('Please enter the title and content.');
            return;
        }
        let formData = $("#form").serialize();
-       console.log(formData);
-       if(confirm('등록하시겠습니까?')) { //yes or no 창 띄우는거.
+       modal.confirm('Do you want to register?', 'ok', function () { //yes or no 창 띄우는거.
            $.post('/api/setBoardWrite', formData, function (Response) {
                location.href = "/board/list"
            });
-       }
+       });
    }
     </script>
 </th:block>

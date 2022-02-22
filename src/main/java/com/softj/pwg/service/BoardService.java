@@ -1,6 +1,8 @@
 package com.softj.pwg.service;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -33,9 +35,11 @@ public class BoardService {
     private final UserRepo userRepo;
 
     public Page<Board> boardList(ParamVO params, Pageable pageable) {
-
         QBoard qBoard = QBoard.board; //앤티티 가져온거
         QComent qComent = QComent.coment;
+        QLike qLike = QLike.like;
+        User user = (User)AuthUtil.getAttr("loginVO");
+
         BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
         where.and(qBoard.nation.eq((String) AuthUtil.getAttr("nation"))); //해당 카테고리 글만 보여지게.
         where.and(qBoard.isDel.eq(false));//삭제 처리가 안된글만 0이면은
@@ -46,19 +50,28 @@ public class BoardService {
         if (params.isMyWritePage()) {//내가쓴글 알람 (서비스까지 구현완료)
             where.and(qBoard.user.eq((User)AuthUtil.getAttr("loginVO")));
         }
-        if (params.isMyCommentPage()) {//내가 쓴글에 댓글 (서비스까지 구현 완료)
-            where.and(JPAExpressions.selectFrom(qComent).where(qComent.board.eq(qBoard)).exists());
-            //서브쿼리
-        }
         if (params.isMyLikePage()) {//(서비스 구현해야하고 jpql로 변환해야함.)
-
-            //invite 실제 링크 복사되겠금 구현하는거
+            where.and(JPAExpressions.selectFrom(qLike).where(qLike.board.eq(qBoard).and(qLike.user.eq(user))).exists());
         }
 
-        JPAQuery<Board> query = jpaQueryFactory
-                                .selectFrom(qBoard)
-                                .join(qBoard.user)
-                                .fetchJoin()
+        JPAQuery<Board> query = jpaQueryFactory.select(Projections.fields(Board.class,
+                                    qBoard.seq,
+                                    qBoard.createdAt,
+                                    qBoard.updatedAt,
+                                    qBoard.isDel,
+                                    qBoard.createdId,
+                                    qBoard.updatedId,
+                                    qBoard.subject,
+                                    qBoard.nation,
+                                    qBoard.content,
+                                    qBoard.views,
+                                    qBoard.user,
+                                    ExpressionUtils.as(
+                                        JPAExpressions.select(qLike.count())
+                                                .from(qLike)
+                                                .where(qLike.board.eq(qBoard)),"likeCount"))
+                                )
+                                .from(qBoard)
                                 .where(where)
                                 .orderBy(qBoard.seq.desc())
                                 .limit(pageable.getPageSize())//조회할 개수 지정
@@ -70,11 +83,6 @@ public class BoardService {
         return new PageImpl<Board>(query.fetch(), pageable, query.fetchCount());
 
     }
-    //
-//    public Page<Board> boardListByMyLike(Pageable pageable) {
-//        PageImpl<Board> list=boardRepo.findAllByLikeUser((User) AuthUtil.getAttr("loginVO"),pageable);
-//        return list;
-//    }
 
     //조회수
     public Board boardView(ParamVO params) { //글 상세 보여주는 메서드
@@ -86,14 +94,36 @@ public class BoardService {
     public Page<Coment> boardComent(ParamVO params,Pageable pageable) {
         //댓글 목록 조회하는 메서드<삭제안된 댓글만 조회해야 함.어떤글에 어떤 댓글 구현해야 하는지.>
         QComent qComent=QComent.coment;
+        QBoard qBoard=QBoard.board;
+        QUser qUser=QUser.user;
+
         User user = (User)AuthUtil.getAttr("loginVO");
         BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
+        where.and(qComent.isDel.eq(false));//삭제 처리가 안된글만 0이면은.
+
         if(params.isMyCommentPage()) { //mypage에서 들어온거
-            where.and(qComent.board.user.eq(user));//userseq조회를 하는거.
+            where.and(qBoard.nation.eq((String) AuthUtil.getAttr("nation"))); //해당 카테고리 글만 보여지게.
+            where.and(qBoard.user.eq(user));
+            where.and(qComent.user.ne(user));
+            JPAQuery<Coment> query = jpaQueryFactory.select(Projections.fields(Coment.class,
+                        qComent.content,
+                        qUser,
+                        qBoard.seq,
+                        qComent.createdAt
+                    ))
+                    .from(qComent)
+                    .leftJoin(qBoard)
+                    .on(qComent.board.eq(qBoard))
+                    .leftJoin(qUser)
+                    .on(qComent.user.eq(qUser))
+                    .where(where)
+                    .orderBy(qComent.seq.desc())//정렬
+                    .limit(pageable.getPageSize())//조회할 개수 지정
+                    .offset(pageable.getOffset());//시작index지정offset
+            return new PageImpl<Coment>(query.fetch(), pageable, query.fetchCount());
         }else{//boardView 상세페이지에서 들어온거
             where.and(qComent.board.seq.eq(params.getSeq()));//특정게시글에 댓글만 조회하기 위한거.
         }
-        where.and(qComent.isDel.eq(false));//삭제 처리가 안된글만 0이면은.
         JPAQuery<Coment> query = jpaQueryFactory
                 .selectFrom(qComent)
                 .join(qComent.user)

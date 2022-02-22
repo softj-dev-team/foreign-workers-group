@@ -613,3 +613,10 @@ ut.clearForm = function(formId){
 		$(this).find("option:eq(0)").prop("selected", true).parent().change()
 	});
 }
+
+ut.copyStr = function(str){
+	$("body").after("<textarea id='tmp'></textarea>");
+	$("#tmp").val(str).select();
+	document.execCommand('copy');
+	$("#tmp").remove();
+}
