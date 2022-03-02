@@ -432,7 +432,9 @@ input[type=checkbox]:checked+label::before{
 /* wrap */
 .wrap{
     background: url(../img/bg.png)no-repeat center / cover;
-    height: 100vh;
+    min-height: 100vh;
+    max-height: fit-content;
+    height: 100%;
 }
 .wrap2{
     height: 100vh;
@@ -518,7 +520,8 @@ input[type=checkbox]:checked+label::before{
 .main-ul li {
     float: left;
     width: calc((100% - 3vw) / 4 - 0.01px);
-    height:23vw;
+    height: 23vw;
+    max-height: 256px;
     text-align: center;
     margin-right: 1vw;
     margin-bottom: 20px;
@@ -669,6 +672,10 @@ input[type=checkbox]:checked+label::before{
     border-bottom: 1px solid #e8e8e8;
     display: flex;
 }
+.board-wrap > div .list-in > a {
+    display: flex;
+    width: calc(100% - 44px);
+}
 .board-wrap > div .list-in > div {
     float: left;
 }
@@ -795,6 +802,8 @@ div.cmt{
 }
 .view-top-in .top-left{
     float: left;
+    flex: 1;
+    width: calc(100% - 88px);
 }
 .view-top-in .top-right{
     float: right;
@@ -861,6 +870,11 @@ div.cmt{
     padding: 20px 0;
     border-top: 1px solid #E8E8E8;
     border-bottom: 1px solid #E8E8E8;
+}
+.view-md p img{
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
 }
 .total-font{
     font-weight: 600;
@@ -1264,6 +1278,10 @@ i.i-img{
 }
 i.i-link{
     background: url(../img/i-link.png) no-repeat center ;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-size: contain;
 }
 i.i-bold{
     background: url(../img/i-bold.png) no-repeat center ;
@@ -1759,4 +1777,25 @@ i.note-icon-file svg{
     .view-comment {
         padding: 0 20px;
     }
+}
+.form-group.note-group-image-url{display:none;}
+.checkbox.sn-checkbox-use-protocol{display:none;}
+.note-btn .note-dropdown-menu {
+    display: block;
+}
+.note-btn-group.note-color.note-color-fore{
+    width: 56px;
+    height: 22px;
+}
+.note-btn-group.note-color.note-color-fore > .note-current-color-button{
+    position: absolute;
+    width: 100%;
+}
+.note-btn-group.note-color.note-color-fore > .dropdown-toggle{
+    position: absolute;
+    width: 100% !important;
+}
+.note-btn-group.note-color.note-color-fore > .dropdown-toggle span.note-icon-caret::before{
+    position: absolute;
+    right: 0;
 }

@@ -13,18 +13,18 @@
         <div class="board-wrap clearfix" id="boardList">
             <div class="board-list" th:each="el : ${list}">
                 <div class="list-in clearfix">
-                    <div class="list-t">
-                        <div class=" clearfix"><!--el.seq리스트를 가져온거.-->
-                            <a th:href="'/board/view?seq='+${el.seq}" class="ellipsis " th:text="${el.subject}"></a>
+                    <a th:href="'/board/view?seq='+${el.seq}">
+                        <div class="list-t">
+                                <div class=" clearfix"><!--el.seq리스트를 가져온거.-->
+                                    <span class="ellipsis " th:text="${el.subject}"></span>
+                                </div>
+                                <div class="list-f">
+                                    <span class="name" th:text="${el.user.nickname}">name</span>
+                                    <span class="time" th:text="${el.createdAt}">14:23</span>
+                                    <span class="view" th:text="${el.views}">121,103</span>
+                                </div>
                         </div>
-                        <div class="list-f">
-                            <span class="name" th:text="${el.user.nickname}">name</span>
-                            <span class="time" th:text="${el.createdAt}">14:23</span>
-                            <span class="view" th:text="${el.views}">121,103</span>
-
-                        </div>
-                    </div>
-
+                    </a>
                     <div class="cmt">
                         <span th:text="${el.likeCount}"></span>
                     </div>
