@@ -1,6 +1,8 @@
 package com.softj.pwg.controller;
 
 import com.softj.pwg.entity.Board;
+import com.softj.pwg.entity.User;
+import com.softj.pwg.repo.NationRepo;
 import com.softj.pwg.service.BoardService;
 import com.softj.pwg.service.UserService;
 import com.softj.pwg.util.AuthUtil;
@@ -11,26 +13,34 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
 public class BoardController {
     private final BoardService boardService;
+    private final NationRepo nationRepo;
 
 
     @GetMapping("/")
-    public String index() throws Exception{
+    public String index(ModelMap model, @RequestParam Map<String,String> params) throws Exception{
+        if(StringUtils.isEmpty(params.get("isIndex")) && !Objects.isNull(AuthUtil.getAttr("nation"))){
+            return "redirect:/board/list";
+        }
+        model.addAttribute("nationList",nationRepo.findAllByIsPublicTrueOrderBySortAsc());
         return "index";
     }
 
     @GetMapping("/login")
     public String login() throws Exception{
-        if(!Objects.isNull(AuthUtil.getLoginVO())){
+        if(!Objects.isNull(AuthUtil.getLoginVO()) && AuthUtil.getLoginVO().getSeq() != 0){
             return "redirect:/";
         }
         return "sub/login";
@@ -44,7 +54,7 @@ public class BoardController {
     //로그아웃
     @GetMapping("/logout")
     public String logout(){
-        AuthUtil.validate();
+        AuthUtil.invalidate();
         return "redirect:/login";
     }
     //글 리스트
@@ -63,6 +73,11 @@ public class BoardController {
     @GetMapping("/board/view")//view comment를 추가해줌
     public String boardView(ModelMap model,ParamVO params,Pageable pageable) throws Exception{
         model.addAttribute("view", boardService.boardView(params));
+        if(Objects.isNull(AuthUtil.getLoginVO())){
+            AuthUtil.setAttr("loginVO", User.builder().build());
+            AuthUtil.setAttr("nation", ((Board)model.getAttribute("view")).getNation());
+            AuthUtil.setAttr("nationName", nationRepo.findById(((Board)model.getAttribute("view")).getNation()).get().getName());
+        }
         model.addAttribute("comment", boardService.boardComent(params,pageable));
         model.addAttribute("likeCount", boardService.getBoardCount((Board)model.getAttribute("view")));
         model.addAttribute("isMyLike", boardService.isMyLike((Board)model.getAttribute("view")));

@@ -2,28 +2,29 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
 
 <th:block layout:fragment="layout-content">
+    <style th:each="el : ${nationList}">
+        .main-ul li a.menu[[${el.seq}]]::before{
+            background: url([[${el.thumbnail}]]) no-repeat 49% 22% / 200%;
+        }
+    </style>
     <div class="wrap">
         <div class="main-header">
             <h1 class="main-tit">FOR FOREIGN WORKERS!</h1>
         </div>
         <div class="main-wrap clearfix wrap-padding">
             <ul class="main-ul">
-                <li><a href="#" data-value="0" data-name="កម្ពុជា" class="cam nation">កម្ពុជា</a></li>
-                <li><a href="#" data-value="1" data-name="Việt Nam" class="vie nation">Việt Nam</a></li>
-                <li><a href="#" data-value="2" data-name="नेपाल" class="nep nation">नेपाल</a></li>
-                <li><a href="#" data-value="3" data-name="Indonesia" class="ina nation">Indonesia</a></li>
-                <li><a href="#" data-value="4" data-name="ประเทศไทย" class="tha nation">ประเทศไทย</a></li>
-                <li><a href="#" data-value="5" data-name="မြန်မာ" class="mya nation">မြန်မာ</a></li>
-                <li><a href="#" data-value="6" data-name="Pilipinas" class="phi nation">Pilipinas</a></li>
-                <li><a href="#" data-value="7" data-name="English" class="eng nation">English</a></li>
+                <li th:each="el : ${nationList}">
+                    <a href="javascript:void(0)" th:attr="data-value=${el.seq}, data-name=${el.name}" class="nation" th:text="${el.name}"
+                    th:classappend="'menu'+${el.seq}"></a>
+                </li>
                 <!--<li class="li-add"><a href="" class="add-i"></a></li>-->
                 <!--value의 값을 가지고 오기 위해 번호로 value 값을 넣어줌-->
             </ul>
         </div>
         <div class="main-footer">
             <div class="mainfoot-in">
-                <a href="" class="request">Request or Report</a>
-                <a href="">about us (-_-v)</a>
+                <a href="https://sites.google.com/view/forforeignworkers/request-or-report" class="request">Request or Report</a>
+                <a href="https://sites.google.com/view/forforeignworkers/about-us">about us (-_-v)</a>
             </div>
         </div>
     </div>

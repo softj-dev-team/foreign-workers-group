@@ -1,0 +1,100 @@
+
+<!doctype html>
+
+<!--공통 영역을 의미-->
+
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:layout="layout-head">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR FOREIGN WORKERS!</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <script src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="/assets/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/admin-common.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <script src="/assets/js/common.js"></script>
+    <script src="/assets/js/customUtil.js"></script>
+    <script src="/assets/js/prototype-array.js"></script>
+    <script src="/assets/js/prototype-date.js"></script>
+    <script src="/assets/js/prototype-number.js"></script>
+    <script src="/assets/js/prototype-string.js"></script>
+
+    <!--공통 로딩-->
+    <div class="loading">
+        <div class="loading-inner dot">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <p>Loading</p>
+        </div>
+    </div>
+
+    <!-- 컨텐츠 영역 -->
+    <div class="admin-wrap">
+        <div class="admin-hd">
+            <div class="admin-hd-in">
+                <div class="hd-logo">
+                    <a href="/admin" class="ad-logo">(-_-v)</a>
+                </div>
+                <div class="gnb">
+                    <ul>
+                        <li><a href="/admin">Main list</a></li>
+                        <li><a href="/admin/user-block">User block</a></li>
+                        <li><a href="/admin/ip-block">IP block</a></li>
+                    </ul>
+                </div>
+                <div class="hd-right">
+                    <a href="/admin" class="flexcenter admin-my"><i class="my-i"></i> <span>admin</span></a>
+                </div>
+            </div>
+        </div>
+
+        <th:block layout:fragment="layout-content"></th:block>
+
+    </div>
+
+    <div class="modal-wrap" id="modal-custom-alert">
+        <div class="modal-body">
+            <button class="mod-close" onclick="modal.close('#modal-custom-alert');"></button>
+            <p></p>
+            <div class="btnbox clearfix">
+                <button type="button" style="width: 100% !important;" class="cancelbtn" onclick="modal.close('#modal-custom-alert');">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-wrap" id="modal-custom-confirm">
+        <div class="modal-body">
+            <button class="mod-close" onclick="modal.close('#modal-custom-confirm');"></button>
+            <p></p>
+            <div class="btnbox clearfix">
+                <button type="button" class="cancelbtn" onclick="modal.close('#modal-custom-confirm');">Cancel</button>
+                <button type="button" class="delbtn" id="modalConfirmBtn"></button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

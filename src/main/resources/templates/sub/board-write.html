@@ -45,12 +45,37 @@
                     file: 'i-file'
                 },
                 callbacks: {
-                    onFileUpload: function(file) {
-                        myOwnCallBack(file[0]);
+                    onImageUpload : function(files, editor, welEditable) {
+                        for (var i = files.length - 1; i >= 0; i--) {
+                            uploadSummernoteImageFile(files[i], this);
+                        }
                     },
                 },
             });
         });
+        /**
+         * 이미지 파일 업로드
+         */
+        function uploadSummernoteImageFile(file, editor) {
+            data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                data : data,
+                type : "POST",
+                url : "/api/fileUpload",
+                contentType : false,
+                processData : false,
+                success : function(res) {
+                    if(ut.isEmpty(res.data)){
+                        return;
+                    }
+
+                    res.data.forEach(function(el){
+                        $(editor).summernote('insertImage', `/api/comFileDownload/${el}.do`);
+                    });
+                }
+            });
+        }
         function myOwnCallBack(file) {
             let data = new FormData();
             data.append("file", file);

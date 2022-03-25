@@ -3,7 +3,11 @@ $(function(){
         console.log(event, xhr, ajaxOptions, thrownError);
         modal.alert("Error");
     });
+    $(document).ajaxSend(function myErrorHandler(event, xhr, ajaxOptions, thrownError) {
+        loading(1);
+    });
     $(document).ajaxComplete(function myCompleteHandler(event, xhr, ajaxOptions, thrownError) {
+        loading(0);
         if(xhr.status == 200 && xhr.responseText.startsWith("<!--")){
             modal.alert("Need Login");
         }
@@ -39,11 +43,11 @@ window.addEventListener('keydown', handleFirstTab);
 
 //체크박스
 $(function(){
-  $('#all-chk').click(function(){
-     var chk = $(this).is(':checked');//.attr('checked');
-      if(chk) $('.checklist input[type="checkbox"]').prop('checked',true);
-      else $('.checklist input').prop('checked',false);
-  });
+    $('#all-chk').click(function(){
+        var chk = $(this).is(':checked');//.attr('checked');
+        if(chk) $('.checklist td:nth-child(1) input').prop('checked',true);
+        else $('.checklist td:nth-child(1) input').prop('checked',false);
+    });
 });
 
 //파일첨부

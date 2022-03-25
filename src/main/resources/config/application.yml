@@ -59,7 +59,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 file:
-  uploadDir: C:/file_storage
+  uploadDir: C:/fileStorage/
 
 logging:
   file:
@@ -129,7 +129,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 file:
-  uploadDir: file_storage
+  uploadDir: fileStorage
 
 logging:
   file:

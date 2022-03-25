@@ -1,0 +1,129 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/admin-layout">
+
+<th:block layout:fragment="layout-content">
+<form id="form1">
+<input type="hidden" name="seq" th:value="${el.seq}">
+        <div class="admin-main">
+            <div class="top-tit-box">
+                <h2 class="s-tit">Add list</h2>
+            </div>
+            <div class="content">
+                <div class="flexwrap add-top">
+                    <h3>Information</h3>
+                </div>
+                <div>
+                    <table class="add-table">
+                        <colgroup>
+                            <col style="width: 20%;">
+                            <col style="width: auto;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>Country</th>
+                                <td>
+                                    <input type="text" class="input1" name="name" th:value="${el.name}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Image</th>
+                                <td>
+                                    <div class="fileBox">
+                                        <div id="profilewrap" onclick="profileupload();">
+                                            <div th:unless="${#strings.isEmpty(el.thumbnail)}" th:style="|background-image: url(${el.thumbnail})|"></div>
+                                        </div>
+                                        <input type="text" class="fileName" id="fileName" name="fileName" readonly="readonly" placeholder="There is no selected file.">
+                                        <label for="image" class="btn_file">File</label>
+                                        <input type="file"  name="image" class="uploadBtn"  id="image"  accept="image/*" onchange="setThumbnail(event);">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>ON/OFF</th>
+                                <td>
+                                   <input type="radio" id="list-exposure" name="isPublic" value="Y" th:checked="${el.public}">
+                                   <label for="list-exposure">ON</label>
+                                   <input type="radio" id="list-hide" name="isPublic" value="N" th:checked="${!el.public}">
+                                   <label for="list-hide">OFF</label>  
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="add-btn-box">
+                    <button type="button" class="btn add-rd mr10">Cancel</button>
+                    <button type="button" class="btn add-be" onclick="saveNation()">Save</button>
+                </div>
+            </div>
+        </div>
+</form>
+    <script type="text/javascript">
+         //파일첨부
+        var uploadFile = $('.fileBox .uploadBtn');
+        uploadFile.on('change', function(){
+            if(window.FileReader){
+                var filename = $(this)[0].files[0].name;
+            } else {
+                var filename = $(this).val().split('/').pop().split('\\').pop();
+            }
+            $(this).siblings('.fileName').val(filename);
+        }); 
+
+        function setThumbnail(event) { 
+            var reader = new FileReader(); 
+            reader.onload = function(event) { 
+                document.getElementById("profilewrap").innerHTML ="";
+                var img = document.createElement("div"); 
+                img.setAttribute("style", "background-image:url("+event.target.result+")"); 
+                img.setAttribute("ID", "profileimg"); 
+                document.querySelector("div#profilewrap").appendChild(img); 
+            }; 
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        function profileupload(){
+            var ele=document.getElementById('image');
+            ele.click();
+            console.log('test');
+        }
+     </script>
+    <script>
+        /* 0. variable */
+        let page = 0;
+        let search = '';
+        let isLast = true;
+
+        /* 1. on load */
+        $(function(){
+            init();
+
+            /* 2. event listener*/
+            $(document).on("click",".togglePublic",function(e){
+                e.preventDefault();
+                togglePublic($(this).val());
+            })
+        })
+
+        /* 3.init*/
+        function init(){
+
+        }
+
+        /* 4. function */
+        function saveNation(){
+            var formData = new FormData($("#form1")[0]);
+
+            $.ajax({
+                url: '/api/admin/saveNation',
+                data: formData,
+                enctype: 'multipart/form-data',
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (res) {
+                    ut.redirect("/admin");
+                }
+            });
+        }
+    </script>
+</th:block>

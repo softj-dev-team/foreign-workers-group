@@ -14,15 +14,19 @@ import com.softj.pwg.repo.UserRepo;
 import com.softj.pwg.util.AuthUtil;
 import com.softj.pwg.vo.ParamVO;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.thymeleaf.util.StringUtils;
 
 import javax.xml.stream.events.Comment;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,10 @@ public class BoardService {
     private final LikeRepo likeRepo;
     private final UserRepo userRepo;
 
+    @Value("${file.uploadDir}")
+    private String FILE_PATH;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
     public Page<Board> boardList(ParamVO params, Pageable pageable) {
         QBoard qBoard = QBoard.board; //앤티티 가져온거
         QComent qComent = QComent.coment;
@@ -41,11 +49,10 @@ public class BoardService {
         User user = (User)AuthUtil.getAttr("loginVO");
 
         BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
-        where.and(qBoard.nation.eq((String) AuthUtil.getAttr("nation"))); //해당 카테고리 글만 보여지게.
+        where.and(qBoard.nation.eq(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))))); //해당 카테고리 글만 보여지게.
         where.and(qBoard.isDel.eq(false));//삭제 처리가 안된글만 0이면은
         if (!StringUtils.isEmpty(params.getSearch())) {//검색어가 있으면 LIKE 추가
-            where.and(qBoard.subject.contains(params.getSearch()));
-            where.and(qBoard.content.contains(params.getSearch()));
+            where.and(qBoard.subject.contains(params.getSearch()).or(qBoard.content.contains(params.getSearch())));
         }
         if (params.isMyWritePage()) {//내가쓴글 알람 (서비스까지 구현완료)
             where.and(qBoard.user.eq((User)AuthUtil.getAttr("loginVO")));
@@ -67,9 +74,9 @@ public class BoardService {
                                     qBoard.views,
                                     qBoard.user,
                                     ExpressionUtils.as(
-                                        JPAExpressions.select(qLike.count())
-                                                .from(qLike)
-                                                .where(qLike.board.eq(qBoard)),"likeCount"))
+                                        JPAExpressions.select(qComent.count())
+                                                .from(qComent)
+                                                .where(qComent.board.eq(qBoard)),"likeCount"))
                                 )
                                 .from(qBoard)
                                 .where(where)
@@ -102,7 +109,7 @@ public class BoardService {
         where.and(qComent.isDel.eq(false));//삭제 처리가 안된글만 0이면은.
 
         if(params.isMyCommentPage()) { //mypage에서 들어온거
-            where.and(qBoard.nation.eq((String) AuthUtil.getAttr("nation"))); //해당 카테고리 글만 보여지게.
+            where.and(qBoard.nation.eq(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))))); //해당 카테고리 글만 보여지게.
             where.and(qBoard.user.eq(user));
             where.and(qComent.user.ne(user));
             JPAQuery<Coment> query = jpaQueryFactory.select(Projections.fields(Coment.class,
@@ -138,7 +145,6 @@ public class BoardService {
 
 
     public Board boardWrite(ParamVO params) {
-        String tmp = (String)AuthUtil.getAttr("nation");
         //영속성 상태가 아니기 때문에 일단 select를 먼저 해야함.
         Board board = Board.builder().build();
         if(params.getSeq() != 0){
@@ -146,7 +152,7 @@ public class BoardService {
         }
         board.setSubject(params.getSubject());
         board.setContent(params.getContent());
-        board.setNation((String) AuthUtil.getAttr("nation"));
+        board.setNation(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))));
         board.setUser((User) AuthUtil.getAttr("loginVO"));
 
         return boardRepo.save(board);
@@ -197,41 +203,42 @@ public class BoardService {
     }
 
     public boolean isMyLike(Board board){
-        return Objects.nonNull(likeRepo.findByBoardAndUser(board,AuthUtil.getLoginVO()));
+        boolean isMyLike = false;
+        try{
+            isMyLike = Objects.nonNull(likeRepo.findByBoardAndUser(board,AuthUtil.getLoginVO()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return isMyLike;
     }
 
+    public List<String> fileUpload(ParamVO params, MultipartHttpServletRequest request) throws Exception{
+        List<String> result = new ArrayList<>();
 
+        List<MultipartFile> imgList = request.getFiles("file");
+        for(MultipartFile img : imgList) {
+            if (!Objects.isNull(img)) {
+                String imagePath = null;
+                String realFileName = img.getOriginalFilename();
+                String ext = realFileName.substring(realFileName.lastIndexOf(".") + 1);
+                String systemFileName = UUID.randomUUID().toString().toUpperCase() + "." + ext;
 
+                String targetPath = FILE_PATH + sdf.format(new Date()) + "/";
+                File targetDir = new File(targetPath);
 
-//    public Coment boardComments(ParamVO params) {
-//        User userid = (User) AuthUtil.getAttr("loginVO"); //user정보가 다들어있음
-//        userid = userRepo.findSeqById(userid.getId()); //시퀀스값만 들어있음.
-//        Board board = boardRepo.findBySeq(userid.getSeq());//시퀀스 값을 세팅.
-//        Coment coment = Coment.builder()
-//                .content(params.getContent())
-//                .build();
-//        coment.setBoard(board);
-//        return comentRepo.save(coment);
-//        board.setUser(user);//user시퀀스 값넣음.
-//        return boardRepo.save(Coment);
-//
-//    }
+                //폴더 생성
+                if (!targetDir.exists()) {
+                    targetDir.mkdirs();
+                }
+
+                FileUtils.writeByteArrayToFile(new File(targetPath + systemFileName), img.getBytes());
+
+                imagePath = targetPath + systemFileName;
+                imagePath = imagePath.replace("/", "_");
+                result.add(imagePath);
+            }
+        }
+
+        return result;
+    }
 }
-
-//select 문 .
-//        List<Board> board=boardRepo.findAllByNation(params.getNation());
-
-
-//        return this.jpaQueryFactory.selectFrom(qBoard)
-//                .where(qBoard.nation.eq((String)AuthUtil.getAttr("nation")))
-//                .fetch();
-//        Board board= null;
-//        board = boardRepo.save(Board.builder()
-//                .subject("제목")
-//                .nation((String)AuthUtil.getAttr("nation")) //아이디
-//                .content("내용")//플렛폼.
-//                        .userSeq(103L)
-//                .build());//쿼리문날라가고
-
-//
-//        return board;

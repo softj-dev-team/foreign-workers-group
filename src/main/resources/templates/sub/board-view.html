@@ -6,7 +6,7 @@
         <div class="header">
             <div class="hd-in">
                 <a href="javascript: void(0);" class="back back-btn"></a>
-                <span class="title"> [[${nationName}]] friends, gather up!</span>
+                <a href="/board/list"><span class="title"> [[${nationName}]] friends, gather up!</span></a>
                 <a href="/mypage/alarm" class="mypage"></a>
             </div>
         </div>
@@ -16,11 +16,12 @@
                     <h3 th:text="${view.subject}" id="subject" ></h3>
                     <div class="view-top-in">
                         <div class="top-left">
-                            <div class="my-img" style="background-image: url(../assets/img/img2.png);"></div>
+                            <div class="my-img" th:unless="${#strings.isEmpty(view.user.image)}" th:style="|background-image: url(/api/comFileDownload/${view.user.image}.do);|"></div>
+                            <div class="my-img" th:if="${#strings.isEmpty(view.user.image)}" style="background-image: url(../assets/img/img2.png);"></div>
                             <div class="left-in">
-                                <p class="view-name" th:text="${view.user.nickname}"></p>
+                                <p class="view-name" th:text="${view.user.nickname}" th:classappend="${#strings.isEmpty(view.user.id) ? '' : 'color-blue'}"></p>
                                 <div class="view-info">
-                                    <span class="time-v" th:text="${view.createdAt}"></span>
+                                    <span class="time-v" th:with="tmp='\'T\''" th:text="${#temporals.format(view.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
                                     <span class="view-v" th:text="${view.views}"></span>
                                 </div>
                             </div>
@@ -30,10 +31,10 @@
                                 <span id="likeCount" th:text="${likeCount}"></span>
                             </div>
                             <div class="comment-btn-box">
-                                <!--<th:block th:if="${view.user.seq == session.loginVO.seq}">-->
+                                <th:block th:if="${view.user.seq == session.loginVO.seq}">
                                     <button type="button" class="modify-btn" id="modify" th:value="${view.seq}" ></button>
                                     <button type="button" class="del-btn"  onclick="modal.open('#deleteModal');"></button>
-                                <!--</th:block>-->
+                                </th:block>
                             </div>
                         </div>
                     </div>
@@ -53,10 +54,11 @@
                     <div class="comment-view" id="boardView">
                         <div class="comment-mo" th:each="comment : ${comment}">
                             <div class="cmt-out">
-                                <div class="comment-img"></div>
+                                <div class="comment-img" th:unless="${#strings.isEmpty(comment.user.image)}" th:style="|background-image: url(/api/comFileDownload/${comment.user.image}.do)|"></div>
+                                <div class="comment-img" th:if="${#strings.isEmpty(comment.user.image)}"></div>
                                 <div class="comment-in">
                                     <div class="flexwrap">
-                                        <div class="com-in-t" th:text="${comment.user.nickname}"></div>
+                                        <div class="com-in-t" th:text="${comment.user.nickname}" th:classappend="${#strings.isEmpty(comment.user.id) ? '' : 'color-blue'}"></div>
 
                                         <div class="comment-btn-box">
                                             <th:block th:if="${comment.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
@@ -67,7 +69,7 @@
                                     </div>
                                     <div class="com-con" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
                                     <div class="list-f">
-                                        <span class="time"></span>
+                                        <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
                                     </div>
 
                                     <div class="comment-box cmt-modify">
@@ -110,7 +112,7 @@
         /*좋아요 임시하트 기능*/
 
         $('.foot-in a.like').click(function(e){
-            let boardSeq = $('#modify').val();
+            let boardSeq = $('input[name=boardSeq]').val();
             e.preventDefault();
             $.post('/api/setBoardLike' , {seq:boardSeq},function (Response) {
 
@@ -165,7 +167,7 @@
         // /* 1. on load */
          /*글삭제*/
         $(document).on('click','.delbtn',function (){
-            let boardSeq = $('#modify').val();
+            let boardSeq = $('input[name=boardSeq]').val();
             let boardNation =$('#deleteModal').val();
             $.post('/api/setRemoveBoard' , {seq:boardSeq},function (Response) {
                 location.href="/board/list?nation="+boardNation;
@@ -183,7 +185,7 @@
         });
 
         // $(document).on('click','.modify-btn',function (){
-        //     let boardSeq = $('#modify').val();
+        //     let boardSeq = $('input[name=boardSeq]').val();
         //     //let content= $(event).prev().val();/*textarea댓글내용*/
         //     $.post('/api/setCommentWrite' , {content,boardSeq:boardSeq},function (Response) {
         //         location.reload();
@@ -193,7 +195,7 @@
         //댓글수정
         function modifyCommet(event,replySeq){/*this랑 시퀀스넘어옴 (댓글수정)*/
             console.log(replySeq);
-            let boardSeq = $('#modify').val();
+            let boardSeq = $('input[name=boardSeq]').val();
             let content= $(event).prev().val();/*textarea댓글내용*/
             console.log(boardSeq);
             console.log(content);
@@ -212,8 +214,8 @@
 
         $(function() {
             /* 2.init*/
-            $("#modify").click(function () {
-                let seq = $('#modify').val();
+            $("input[name=boardSeq]").click(function () {
+                let seq = $('input[name=boardSeq]').val();
                 location.href = "/board/openWrite?seq=" + seq;
                 /* 3. event listener*/
             });
@@ -225,7 +227,7 @@
                     if (isLast) {
                         return;
                     }
-                    let seq = $('#modify').val(); //어느 글인지 알기 위해서
+                    let seq = $('input[name=boardSeq]').val(); //어느 글인지 알기 위해서
                     //만약 스크롤 끝까지 내렸으면
                     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
                         page++;
@@ -241,10 +243,10 @@
                                 for (var el of data) { //값이 el에 하나하나 담겨있음 el=i번째 인덱스 그 길이는 data만큼
                                     html += '<div class="comment-mo">'
                                     html += '<div class="cmt-out">'
-                                    html += '<div class="comment-img"></div>'
+                                    html += `<div class="comment-img" ${ut.isEmpty(el.user.image) ? '' : 'style="background-image: url(/api/comFileDownload/'+el.user.image+'.do)"'}></div>`
                                     html += '<div class="comment-in">'
                                     html += '<div class="flexwrap">'
-                                    html += '<div class="com-in-t">'+el.user.nickname+'</div>'
+                                    html += '<div class="com-in-t '+(el.user.id ? 'color-blue' : '')+'">'+el.user.nickname+'</div>'
                                     html += '<div class="comment-btn-box">'
                                     if (el.user.seq == $('#userSeq').val()) {//user를 hidden로 숨겨넣고 가져옴
                                         html += '<button type="button" class="modify-btn" value="'+el.seq+'"></button>'

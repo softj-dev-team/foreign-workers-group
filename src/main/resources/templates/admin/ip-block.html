@@ -1,0 +1,98 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/admin-layout">
+
+<th:block layout:fragment="layout-content">
+    <form id="form1">
+        <input type="hidden" id="page" name="page" th:value="${list.pageable.pageNumber}">
+        <div class="admin-main">
+            <div class="top-tit-box">
+                <h2 class="s-tit">IP List</h2>
+            </div>
+            <div class="admin-tb">
+                <form action="" onsubmit="return false;">
+                    <div class="cont-src">
+                        <div class="src-left">
+                            <div class="srcBox">
+                                <input type="text" class="src-form" name="ip" th:value="${param.ip}">
+                                <button type="submit" class="src-btn" onclick="goSearch()"></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="tb-btn-box">
+                    <div class="flex-be">
+                        <button type="button" class="btn" onclick="goDelete()">Delete selection</button>
+                        <button type="button" class="btn" onclick="ut.redirect('/admin/ip-add')">Add</button>
+                    </div>
+                </div>
+                <table class="table block-tb">
+                    <colgroup>
+                        <col width="5%">
+                        <col width="auto">
+                        <col width="30%">
+                    </colgroup>
+                    <thead class="table-thead ">
+                        <tr>
+                            <th><input type="checkbox" name="all-ck" id="all-chk"></th>
+                            <th>IP</th>
+                            <th>Blocking time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body checklist">
+                        <tr th:each="el:${list}" th:with="tmp='\'T\''">
+                            <td><input type="checkbox" name="seqList" th:value="${el.seq}"></td>
+                            <td><a th:text="${el.ip}" th:href="|/admin/ip-add?seq=${el.seq}|"></a></td>
+                            <td th:text="${#temporals.format(el.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">2022.03.07 23:23:30</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!--페이지네이션-->
+                <th:block th:with="list=${list}, formId='form1'" th:include="fragments/pagination :: pagination"></th:block>
+            </div>
+        </div>
+
+    </form>
+    <script>
+        /* 0. variable */
+
+        /* 1. on load */
+        $(function(){
+            init();
+
+            /* 2. event listener*/
+            $(document).on("click",".toggleUserBlock",function(e){
+                e.preventDefault();
+                toggleUserBlock($(this).val());
+            })
+        })
+
+        /* 3.init*/
+        function init(){
+
+        }
+
+        /* 4. function */
+        function toggleUserBlock(seq){
+            $.post('/api/admin/toggleUserBlock', {seq: seq}, function(res){
+                $(`.toggleUserBlock[value=${seq}]`).prop("checked",res.data.block);
+            });
+        }
+
+        function goSearch(){
+            $("#page").val(0);
+            $("#form1").submit();
+        }
+
+        function goDelete(){
+            if($("input[name=seqList]:checked").length == 0){
+                modal.alert("There is no data checked.");
+                return;
+            }
+
+            $.post('/api/admin/deleteIps', $("#form1").serialize(), function(res){
+                location.reload();
+            });
+        }
+    </script>
+</th:block>

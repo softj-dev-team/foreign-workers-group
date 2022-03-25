@@ -52,6 +52,12 @@ repositories {
 }
 
 dependencies {
+    //구글 구아바
+    implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
+
+    // 커몬 IO
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
     //모델맵퍼
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.8'
 

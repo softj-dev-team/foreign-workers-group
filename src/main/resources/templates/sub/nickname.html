@@ -12,12 +12,16 @@
 
 
             <div class="anonymous-wrap">
+                <form id="form1">
                 <!--                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">-->
-                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap">
-                <div></div>
-            </div>
+                <input type="file" id="image" name="image" accept="image/*" onchange="setThumbnail(event);"/>
+                <div id="profilewrap" onclick="profileupload();">
+                    <div th:unless="${#strings.isEmpty(session.loginVO.image)}" th:style="|background-image: url(/api/comFileDownload/${session.loginVO.image}.do)|"></div>
+                    <div th:if="${#strings.isEmpty(session.loginVO.image)}"></div>
+                </div>
                 <input type="text" id="nickname" name="nickname" placeholder="Nickname" th:value="${session.loginVO.nickname}">
                 <button type="button" class="btn" onclick="setNickName()">setting Nickname</button>
+                </form>
             </div>
         </div>
     </div>
@@ -62,10 +66,20 @@
                 modal.required("nickname");
                 return;
             }
-            $.post('/api/setNickName', {nickname: nickname}, function (res) {
-                ut.redirect("/");
-            });//밑에 ajax랑 똑같이 사용해 주면 된다.
+            var formData = new FormData($("#form1")[0]);
 
+            $.ajax({
+                url: '/api/setNickName',
+                data: formData,
+                enctype: 'multipart/form-data',
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (res) {
+                    ut.redirect("/");
+                }
+            });
         }
     </script>
 </th:block>

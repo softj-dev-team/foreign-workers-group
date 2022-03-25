@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class Board extends Auditing{
     private String subject;
-    private String nation;
+    private long nation;
     private String content;
     private long views;
 //    @Column(name="user_seq")

@@ -1,0 +1,118 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/admin-layout">
+
+<th:block layout:fragment="layout-content">
+
+        <div class="admin-main">
+            <div class="top-tit-box">
+                <h2 class="s-tit">Main List</h2>
+            </div>
+            <div class="admin-tb">
+                <div class="tb-btn-box">
+                    <button type="button" class="list-btn" onclick="ut.redirect('/admin/list-add')">Add list</button>
+                </div>
+                <table class="table ">
+                    <colgroup>
+                        <col width="70px">
+                        <col width="150px">
+                        <col width="auto">
+                        <col width="120px">
+                        <col width="120px">
+                        <col width="120px">
+                    </colgroup>
+                    <thead class="table-thead">
+                        <tr>
+                            <th>Order</th>
+                            <th>Image</th>
+                            <th>Country</th>
+                            <th>ON/OFF</th>
+                            <th>Edit</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body list-tb com-i">
+                        <tr th:each="el:${list}" th:id="|tr${el.seq}|">
+                            <td th:text="${el.sort}">1</td>
+                            <td><div class="ad-img ad-cam" th:style="|background-image: url('${el.thumbnail}')|"></div></td>
+                            <td th:text="${el.name}">កម្ពុជា</td>
+                            <td>
+                                <div class="toggle-switch">
+                                    <input class="togglePublic" type="checkbox" th:name="|ch-Tog${elStat.index}|" th:id="|ch-Tog${elStat.index}|" th:checked="${el.public}" th:value="${el.seq}">
+                                    <label th:for="|ch-Tog${elStat.index}|">
+                                        <span class="tog-track"></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td><button type="button" class="ad-btn" th:onclick="|ut.redirect('/admin/list-add','seq',${el.seq})|">Edit</button></td>
+                            <td>
+                                <button type="button" class="or-up btn" th:value="${el.seq}">up</button>
+                                <button type="button" class="or-down btn" th:value="${el.seq}">down</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--<div class="ad-foo-btn">
+                    <button type="button" class="save-btn btn">Save</button>
+                </div>-->
+            </div>
+        </div>
+
+    <script type="text/javascript">
+        //  순서
+        $('.list-tb td:nth-child(6) button:even').bind('click', function(){ moveUp(this) });
+        $('.list-tb td:nth-child(6) button:odd').bind('click', function(){ moveDown(this) });
+        function moveUp(el){
+            var $tr = $(el).closest('tr');
+            var $trPrev = $tr.prev();
+            if($trPrev.length){
+                $.post('/api/admin/updateSort', {seq: $(el).val(), toggle: "up"},function(res){
+                    $tr.prev().before($tr);
+                    var tmp = $tr.children().eq(0).html();
+                    $tr.children().eq(0).html($trPrev.children().eq(0).html());
+                    $trPrev.children().eq(0).html(tmp);
+                })
+            };
+        }
+        function moveDown(el){
+            var $tr = $(el).closest('tr');
+            var $trNext = $tr.next();
+            if($trNext.length){
+                $.post('/api/admin/updateSort', {seq: $(el).val(), toggle: "down"},function(res){
+                    $tr.next().after($tr);
+                    var tmp = $tr.children().eq(0).html();
+                    $tr.children().eq(0).html($trNext.children().eq(0).html());
+                    $trNext.children().eq(0).html(tmp);
+                })
+            };
+        }
+     </script>
+    <script>
+        /* 0. variable */
+        let page = 0;
+        let search = '';
+        let isLast = true;
+
+        /* 1. on load */
+        $(function(){
+            init();
+
+            /* 2. event listener*/
+            $(document).on("click",".togglePublic",function(e){
+                e.preventDefault();
+                togglePublic($(this).val());
+            })
+        })
+
+        /* 3.init*/
+        function init(){
+
+        }
+
+        /* 4. function */
+        function togglePublic(seq){
+            $.post('/api/admin/togglePublic', {seq: seq}, function(res){
+                $(`.togglePublic[value=${seq}]`).prop("checked",res.data.public);
+            });
+        }
+    </script>
+</th:block>

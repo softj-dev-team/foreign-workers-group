@@ -1,0 +1,48 @@
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
+
+<th:block layout:fragment="layout-content">
+
+    <div class="wrap2">
+        <div class="header white">
+            <div class="hd-in">
+                <span class="title">FOR FOREIGN WORKERS!</span>
+            </div>
+        </div>
+        <div class="board-wrap clearfix">
+            <div class="anonymous-wrap">
+                <form id="form1" onsubmit="return false;">
+                    <input type="text" id="id" name="id" placeholder="ID">
+                    <input type="password" id="password" name="password" placeholder="PASSWORD">
+                    <button type="submit" class="btn" onclick="adminLogin()">Admin Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        /* 0. variable */
+
+        /* 1. on load */
+        $(function(){
+            init();
+
+            /* 2. event listener*/
+        })
+
+        /* 3.init*/
+        function init(){
+
+        }
+
+        /* 4. function */
+        function adminLogin(){
+            $.post('/api/admin/login',$("#form1").serialize(),function(res){
+                if(ut.isEmpty(res.data)){
+                    modal.alert("not matched");
+                    return;
+                }
+                ut.redirect("/admin");
+            })
+        }
+    </script>
+</th:block>

@@ -18,6 +18,10 @@ public class User extends Auditing{
     private String nickname;
     private String id;
     private String platform;
+    private String image;
+    private boolean isAdmin;
+    private boolean isBlock;
+    private String password;
 
 //    @OneToMany(mappedBy = "board")
 //    private List<Coment> coment;

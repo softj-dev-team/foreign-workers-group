@@ -551,7 +551,7 @@ input[type=checkbox]:checked+label::before{
     margin-bottom: 10px;
 }
 .main-ul li a.cam::before{
-    background: url(../img/cambodia.jpg)no-repeat 49% 22% / 200%;
+    background: url(../img/cambodia.jpg) no-repeat 49% 22% / 200%;
 }
 .main-ul li a.vie::before{
     background: url(../img/buildings.jpg)no-repeat 40% 30% / 250%;
@@ -1798,4 +1798,9 @@ i.note-icon-file svg{
 .note-btn-group.note-color.note-color-fore > .dropdown-toggle span.note-icon-caret::before{
     position: absolute;
     right: 0;
+}
+
+/* 2022-03-16 추가 */
+.color-blue{
+    color: #3379AE;
 }

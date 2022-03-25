@@ -1,6 +1,14 @@
 <html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="fragments/layout">
 <head>
+    <head>
+        <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
+        <meta name="appleid-signin-client-id" content="com.forforeignworkers.ffw2">
+        <meta name="appleid-signin-scope" content="email">
+        <meta name="appleid-signin-redirect-uri" content="https://www.forforeignworkers.com/login">
+        <meta name="appleid-signin-state" content="ffwCSRF">
+        <meta name="appleid-signin-use-popup" content="true"> <!-- or false defaults to false -->
+    </head>
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <!-- content에 자신의 OAuth2.0 클라이언트ID를 넣습니다. -->
     <meta name ="google-signin-client_id" content="733678719087-acn101472hp6flg8es71ldup7qu0l7li.apps.googleusercontent.com">
@@ -20,20 +28,22 @@
 <!--                        onlogin="checkLoginState();">-->
 <!--                </fb:login-button>-->
 
-                <button type="button" class="facebookbtn" id="facebook" onclick="fnFbCustomLogin()"><i class="fb-i"></i>Log In With Facebook</button>
-                <button type="button" class="googlebtn" id="google"><i class="gg-i"></i>Log In With Google</button>
-                <button type="button" class="applebtn" onclick="popAppleLogin();"><i class="ap-i"></i>Log In With  Apple</button>
+                <button type="button" class="facebookbtn" id="facebook" onclick="fnFbCustomLogin()"><i class="fb-i"></i>Login With Facebook</button>
+                <button type="button" class="googlebtn" id="google"><i class="gg-i"></i>Login With Google</button>
+                <button type="button" class="applebtn" onclick="popAppleLogin();"><i class="ap-i"></i>Login With  Apple</button>
             </div>
             <div class="orbox">
                 <div class="or">OR</div>
             </div>
             <div class="anonymous-wrap">
+                <form id="form1">
 <!--                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">-->
-                <input type="file" id="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">
-                    <div></div>
-                </div>
-                <input type="text" id="nickname" name="nickname" placeholder="Nickname">
-                <button type="button" class="btn" onclick="anonymousLogin()">Anonymous login</button>
+                    <input type="file" id="image" name="image" accept="image/*" onchange="setThumbnail(event);"/> <div id="profilewrap" onclick="profileupload();">
+                        <div></div>
+                    </div>
+                    <input type="text" id="nickname" name="nickname" placeholder="Nickname">
+                    <button type="button" class="btn" onclick="anonymousLogin()">Anonymous Login</button>
+                </form>
             </div>
         </div>
     </div>
@@ -86,8 +96,20 @@
                 modal.required("nickname");
                 return;
             }
-            $.post('/api/login',{nickname: nickname},function(res){
-                ut.redirect("/");
+
+            var formData = new FormData($("#form1")[0]);
+
+            $.ajax({
+                url: '/api/login',
+                data: formData,
+                enctype: 'multipart/form-data',
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (res) {
+                    ut.redirect("/");
+                }
             });
         }
     </script>
@@ -97,8 +119,20 @@
             FB.login(function(response) {
                 if (response.status === 'connected') {
                     FB.api('/me', 'get', {fields: 'name,email'}, function(r) {
-                        $.post('/api/login',{id: r.id,platform:"facebook"},function(res){
-                            ut.redirect("nickName");
+                        var formData = new FormData();
+                        formData.append("id",r.id);
+                        formData.append("platform","facebook");
+                        $.ajax({
+                            url: '/api/login',
+                            data: formData,
+                            enctype: 'multipart/form-data',
+                            dataType: 'json',
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function (res) {
+                                ut.redirect("nickName");
+                            }
                         });
                     })
                 }
@@ -141,8 +175,20 @@
             .done(function(e){
                 //프로필을 가져온다.
                 var profile = googleUser.getBasicProfile();
-                $.post('/api/login',{id: profile.SW, platform:"google"},function(res){
-                    ut.redirect("nickName");
+                var formData = new FormData();
+                formData.append("id",profile.SW);
+                formData.append("platform","google");
+                $.ajax({
+                    url: '/api/login',
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (res) {
+                        ut.redirect("nickName");
+                    }
                 });
             })
             .fail(function(e){
@@ -155,17 +201,7 @@
         }
     </script>
     <!-- 애플 -->
-    <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"></script>
     <script type="text/javascript">
-        AppleID.auth.init({
-            clientId : 'com.forforeignworkers.pwg',
-            scope : 'name email',
-            redirectURI : 'https://forforeignworkers.com/login',
-            state : 'pwgCSRF',
-            nonce : '[NONCE]',
-            usePopup : true
-        });
-
         async function getAppleUser() {
             return await AppleID.auth.signIn();
         }
@@ -174,8 +210,20 @@
             getAppleUser()
             .then(appleUser => {
                 let payload = parseJwt(appleUser.authorization.id_token);
-                $.post('/api/login',{id: payload.email ,platform:"apple"},function(res){
-                    ut.redirect("nickName");
+                var formData = new FormData();
+                formData.append("id",payload.email);
+                formData.append("platform","apple");
+                $.ajax({
+                    url: '/api/login',
+                    data: formData,
+                    enctype: 'multipart/form-data',
+                    dataType: 'json',
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (res) {
+                        ut.redirect("nickName");
+                    }
                 });
             })
 

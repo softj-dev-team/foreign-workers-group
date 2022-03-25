@@ -57,8 +57,8 @@
                                             </a>
                                         </div>
                                         <div class="list-f" >
-                                            <span class="name">${el.user.nickname}</span>
-                                            <span class="time">${el.createdAt}</span>
+                                            <span class="name ${el.user.id ? 'color-blue' : ''}">${el.user.nickname}</span>
+                                            <span class="time">${new Date(el.createdAt).format('yyyy-MM-dd &nbsp;THH:mm:ss')}</span>
                                         </div>
                                     </div>
                                 </div>

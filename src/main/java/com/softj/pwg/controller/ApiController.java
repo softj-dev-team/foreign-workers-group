@@ -6,14 +6,23 @@ import com.softj.pwg.entity.User;
 import com.softj.pwg.service.BoardService;
 import com.softj.pwg.service.UserService;
 import com.softj.pwg.util.AuthUtil;
+import com.softj.pwg.util.CommonUtil;
 import com.softj.pwg.vo.ParamVO;
 import com.softj.pwg.vo.Response;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,18 +34,18 @@ public class ApiController {
     private final BoardService boardService;
 
     //로그인
-    @PostMapping("/login")
-    public Response login(ParamVO params) {
+    @RequestMapping("/login")
+    public Response login(ParamVO params, MultipartHttpServletRequest request) throws Exception{
         return Response.builder()
-                .data(userService.login(params))
+                .data(userService.login(params, request))
                 .build();
     }
 
     //닉네임 로그인
     @PostMapping("/setNickName")
-    public Response setNickName(ParamVO params) {
+    public Response setNickName(ParamVO params, MultipartHttpServletRequest request) throws Exception{
         return Response.builder()
-                .data(userService.setNickName(params))
+                .data(userService.setNickName(params,request))
                 .build();
     }
     //네이션 세션 저장
@@ -96,12 +105,29 @@ public class ApiController {
 
     }
 
-//    @PostMapping("/getPageMyLike") //내가 좋아요 한글
-//    public Response getPageMyLike(Pageable pageable) {
-//        return Response.builder()
-//                .data(boardService.boardListByMyLike(pageable))
-//                .build();
-//
-//    }
+    /**
+     * 파일 다운로드
+     * @param fileId
+     * @throws Exception
+     */
+    @GetMapping("/comFileDownload/{path}.do")
+    public void fileDownload(@PathVariable("path") String path,
+                             HttpServletRequest request,
+                             HttpServletResponse response, @RequestParam HashMap<String,String> search) throws Exception {
+        path = path.replace("_","/");
+        CommonUtil.setDisposition(path.substring(path.lastIndexOf("/") + 1), request, response);
+        byte[] data = null;
 
+        data = FileUtils.readFileToByteArray(new File(path));
+
+        IOUtils.write(data, response.getOutputStream());
+    }
+
+    //섬머노트
+    @PostMapping("/fileUpload")
+    public Response fileUpload(ParamVO params, MultipartHttpServletRequest request) throws Exception{
+        return Response.builder()
+                .data(boardService.fileUpload(params, request))
+                .build();
+    }
 }

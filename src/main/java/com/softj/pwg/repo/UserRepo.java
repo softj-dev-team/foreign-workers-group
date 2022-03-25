@@ -14,6 +14,7 @@ public interface UserRepo extends JpaRepository<User, Long>, QuerydslPredicateEx
     //user entity 넣어주고 pk 넣어줌. pk 타임 / QuerydslPredicateExecutorquerydsl 로 jpql을 동적쿼리 사용하게 쉽게 사용하기 위해서.
 
     User findFirstByIdAndPlatform(String id,String platform);
+    User findFirstById(String id);
     //User findBySeq(long seq);
    // User findSeqById(String id);// 아이디로 시퀀스 가져옴.
 

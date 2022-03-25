@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>(-_-v)</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link href="../assets/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="../assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="../assets/css/admin-common.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="admin-wrap">
+        <div class="admin-hd">
+            <div class="admin-hd-in">
+                <div class="hd-logo">
+                    <a href="index.html" class="ad-logo">(-_-v)</a>
+                </div>
+                <div class="gnb">
+                    <ul>
+                        <li class="active"><a href="index.html">Main List</a></li>
+                        <li><a href="user-block.html">User Block</a></li>
+                        <li><a href="ip-block.html">IP Block</a></li>
+                    </ul>
+                </div>
+                <div class="hd-right">
+                    <a href="" class="flexcenter admin-my"><i class="my-i"></i> <span>admin</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="admin-main">
+            <div class="top-tit-box">
+                <h2 class="s-tit">Edit</h2>
+            </div>
+            <div class="content">
+                <div class="flexwrap add-top">
+                    <h3>Information</h3>
+                </div>
+                <div>
+                    <table class="add-table">
+                        <colgroup>
+                            <col style="width: 20%;">
+                            <col style="width: auto;">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>country</th>
+                                <td>
+                                    <input type="text" class="input1" value="កម្ពុជា">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>image</th>
+                                <td>
+                                    <div class="fileBox">
+                                        <div id="profilewrap" onclick="profileupload();">
+                                        <div style="background-image: url(../assets/img/buildings.jpg);"></div>
+                                        </div>
+                                        <input type="text" class="fileName" id="fileName" name="fileName" readonly="readonly" placeholder="There is no selected file." type="file">
+                                        <label for="image" class="btn_file">File</label>
+                                        <input type="file"  name="uploadBtn" class="uploadBtn"  id="image"  accept="image/*" onchange="setThumbnail(event);">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>on/off</th>
+                                <td>
+                                   <input type="radio" id="list-exposure" name="list-exposure" value="Y" checked>
+                                   <label for="list-exposure">on</label>
+                                   <input type="radio" id="list-hide" name="list-exposure" value="N">
+                                   <label for="list-hide">off</label>  
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="add-btn-box">
+                    <button type="button" class="btn add-rd mr10">Cancel</button>
+                    <button type="button" class="btn add-be">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+         //파일첨부
+        var uploadFile = $('.fileBox .uploadBtn');
+        uploadFile.on('change', function(){
+            if(window.FileReader){
+                var filename = $(this)[0].files[0].name;
+            } else {
+                var filename = $(this).val().split('/').pop().split('\\').pop();
+            }
+            $(this).siblings('.fileName').val(filename);
+        }); 
+
+        function setThumbnail(event) { 
+            var reader = new FileReader(); 
+            reader.onload = function(event) { 
+                document.getElementById("profilewrap").innerHTML ="";
+                var img = document.createElement("div"); 
+                img.setAttribute("style", "background-image:url("+event.target.result+")"); 
+                img.setAttribute("ID", "profileimg"); 
+                document.querySelector("div#profilewrap").appendChild(img); 
+            }; 
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        function profileupload(){
+            var ele=document.getElementById('image');
+            ele.click();
+            console.log('test');
+        }
+     </script>
+</body>
+</html>

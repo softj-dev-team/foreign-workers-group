@@ -13,6 +13,12 @@ public class AuthUtil {
         return (User)httpSession.getAttribute("loginVO");
     }
 
+    public static User getAdminVO() {
+        ServletRequestAttributes servletRequestAttribute = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpSession httpSession = servletRequestAttribute.getRequest().getSession(true);
+        return (User)httpSession.getAttribute("adminVO");
+    }
+
     public static void setAttr(String key,Object obj) {
         ServletRequestAttributes servletRequestAttribute = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession httpSession = servletRequestAttribute.getRequest().getSession(true);
@@ -25,13 +31,13 @@ public class AuthUtil {
         return httpSession.getAttribute(key);
     }
 
-    public static void validate() {
+    public static void invalidate() {
         ServletRequestAttributes servletRequestAttribute = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession httpSession = servletRequestAttribute.getRequest().getSession(true);
         httpSession.invalidate();
     }
 
-    public static void validate(String key) {
+    public static void invalidate(String key) {
         ServletRequestAttributes servletRequestAttribute = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession httpSession = servletRequestAttribute.getRequest().getSession(true);
         httpSession.setAttribute(key,null);
