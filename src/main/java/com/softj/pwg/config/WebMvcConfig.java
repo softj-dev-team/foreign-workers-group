@@ -2,6 +2,7 @@ package com.softj.pwg.config;
 
 import com.softj.pwg.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -28,10 +29,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/assets/**")
                 .excludePathPatterns("/admin")
                 .excludePathPatterns("/admin/**")
+                .excludePathPatterns("/error")
                 .addPathPatterns("/**");
 
         registry.addInterceptor(new NationInterceptor())
                 .excludePathPatterns("/board/view")
+                .excludePathPatterns("/error")
                 .addPathPatterns("/board/**")
                 .addPathPatterns("/search/**")
                 .addPathPatterns("/mypage/**");
@@ -39,6 +42,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new AdminInterceptor())
                 .excludePathPatterns("/admin/login")
                 .excludePathPatterns("/api/admin/login")
+                .excludePathPatterns("/error")
                 .addPathPatterns("/admin/**");
+
+        registry.addInterceptor(IpBlockInterceptor())
+                .excludePathPatterns("/error")
+                .excludePathPatterns("/assets/**")
+                .addPathPatterns("/**");
+    }
+
+    @Bean
+    public IpBlockInterceptor IpBlockInterceptor(){
+        return new IpBlockInterceptor();
     }
 }

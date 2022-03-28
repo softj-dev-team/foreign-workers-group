@@ -104,7 +104,8 @@ public class UserService {
     public Page<User> getUserList(ParamVO params, Pageable p) {
         QUser qEntity = QUser.user;
         QSort qSort = new QSort(qEntity.seq.desc());
-        BooleanBuilder where = new BooleanBuilder(qEntity.isAdmin.eq(false));
+        BooleanBuilder where = new BooleanBuilder(qEntity.isAdmin.eq(false))
+                .and(qEntity.platform.isNotNull());
         if(!StringUtils.isEmpty(params.getNickname())){
             where.and(qEntity.nickname.contains(params.getNickname()));
         }

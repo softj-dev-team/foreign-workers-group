@@ -108,6 +108,10 @@
                 contentType: false,
                 type: 'POST',
                 success: function (res) {
+                    if(res.data.block){
+                        modal.alert("This is a stopped user.");
+                        return;
+                    }
                     ut.redirect("/");
                 }
             });
@@ -131,6 +135,10 @@
                             contentType: false,
                             type: 'POST',
                             success: function (res) {
+                                if(res.data.block){
+                                    modal.alert("This is a stopped user.");
+                                    return;
+                                }
                                 ut.redirect("nickName");
                             }
                         });
@@ -187,6 +195,10 @@
                     contentType: false,
                     type: 'POST',
                     success: function (res) {
+                        if(res.data.block){
+                            modal.alert("This is a stopped user.");
+                            return;
+                        }
                         ut.redirect("nickName");
                     }
                 });
@@ -222,6 +234,10 @@
                     contentType: false,
                     type: 'POST',
                     success: function (res) {
+                        if(res.data.block){
+                            modal.alert("This is a stopped user.");
+                            return;
+                        }
                         ut.redirect("nickName");
                     }
                 });
