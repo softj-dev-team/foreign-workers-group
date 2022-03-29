@@ -101,7 +101,7 @@
                 return;
             }
 
-            $.post('/api/admin/deleteIps', $("#form1").serialize(), function(res){
+            $.post('/api/admin/deleteUsers', $("#form1").serialize(), function(res){
                 location.reload();
             });
         }

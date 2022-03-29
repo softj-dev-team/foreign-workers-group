@@ -69,6 +69,11 @@ public class UserService {
                     .build());//쿼리문날라가고
 
         }
+
+        if(user.isBlock()) {
+            return user;
+        }
+
         AuthUtil.setAttr("loginVO", user); //세션에 아이디랑 플렛폼 저장 처음에 초기값은 0,1로 되어있음
          //save하는데 안에서 user만들고 닉네임 넣었고 그걸 바로 세이브시켜라.
         return user;
