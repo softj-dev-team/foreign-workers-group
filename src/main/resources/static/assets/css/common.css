@@ -873,7 +873,7 @@ div.cmt{
 }
 .view-md p img{
     max-width: 100%;
-    display: block;
+    display: block!important;
     margin: 0 auto;
 }
 .total-font{
