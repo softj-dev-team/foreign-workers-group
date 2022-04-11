@@ -77,9 +77,9 @@ dependencies {
     implementation group: 'com.querydsl', name: 'querydsl-apt', version: '4.4.0'
     implementation group: 'com.querydsl', name: 'querydsl-core', version: '4.4.0'
 
-    compileOnly 'org.projectlombok:lombok'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

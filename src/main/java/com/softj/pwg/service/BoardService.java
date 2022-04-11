@@ -27,6 +27,8 @@ import javax.xml.stream.events.Comment;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -42,13 +44,20 @@ public class BoardService {
     private String FILE_PATH;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
+    public List<Board> noticeList(ParamVO params, Pageable pageable) {
+        QBoard qBoard = QBoard.board;
+        BooleanBuilder where = new BooleanBuilder(qBoard.isDel.eq(false))
+                .and(qBoard.isNotice.eq(true));
+        return StreamSupport.stream(boardRepo.findAll(where).spliterator(), false).collect(Collectors.toList());
+    }
+
     public Page<Board> boardList(ParamVO params, Pageable pageable) {
         QBoard qBoard = QBoard.board; //앤티티 가져온거
         QComent qComent = QComent.coment;
         QLike qLike = QLike.like;
         User user = (User)AuthUtil.getAttr("loginVO");
 
-        BooleanBuilder where = new BooleanBuilder();//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
+        BooleanBuilder where = new BooleanBuilder(qBoard.isNotice.eq(false));//where절을 조건문으로 만들수 있게 하는기능 자바 형태로 사용할 수 있다.
         where.and(qBoard.nation.eq(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))))); //해당 카테고리 글만 보여지게.
         where.and(qBoard.isDel.eq(false));//삭제 처리가 안된글만 0이면은
         if (!StringUtils.isEmpty(params.getSearch())) {//검색어가 있으면 LIKE 추가
@@ -63,6 +72,7 @@ public class BoardService {
 
         JPAQuery<Board> query = jpaQueryFactory.select(Projections.fields(Board.class,
                                     qBoard.seq,
+                                    qBoard.thumbnail,
                                     qBoard.createdAt,
                                     qBoard.updatedAt,
                                     qBoard.isDel,
@@ -112,6 +122,7 @@ public class BoardService {
             where.and(qBoard.nation.eq(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))))); //해당 카테고리 글만 보여지게.
             where.and(qBoard.user.eq(user));
             where.and(qComent.user.ne(user));
+            where.and(qComent.upperSeq.isNull());
             JPAQuery<Coment> query = jpaQueryFactory.select(Projections.fields(Coment.class,
                         qComent.content,
                         qUser,
@@ -124,23 +135,31 @@ public class BoardService {
                     .leftJoin(qUser)
                     .on(qComent.user.eq(qUser))
                     .where(where)
-                    .orderBy(qComent.seq.desc())//정렬
+                    .orderBy(qComent.seq.asc())//정렬
                     .limit(pageable.getPageSize())//조회할 개수 지정
                     .offset(pageable.getOffset());//시작index지정offset
-            return new PageImpl<Coment>(query.fetch(), pageable, query.fetchCount());
-        }else{//boardView 상세페이지에서 들어온거
+            List<Coment> list = query.fetch();
+            list.forEach(el -> {
+                el.setChildren(StreamSupport.stream(comentRepo.findAll(new BooleanBuilder().and(qComent.isDel.eq(false).and(qComent.upperSeq.eq(el.getSeq())))).spliterator(), false).collect(Collectors.toList()));
+            });
+            return new PageImpl<Coment>(list, pageable, query.fetchCount());
+        }else{
             where.and(qComent.board.seq.eq(params.getSeq()));//특정게시글에 댓글만 조회하기 위한거.
+            where.and(qComent.upperSeq.isNull());
         }
         JPAQuery<Coment> query = jpaQueryFactory
                 .selectFrom(qComent)
                 .join(qComent.user)
                 .fetchJoin()
                 .where(where)
-                .orderBy(qComent.seq.desc())//정렬
-                .limit(pageable.getPageSize())//조회할 개수 지정
-                .offset(pageable.getOffset());//시작index지정offset
-        return new PageImpl<Coment>(query.fetch(), pageable, query.fetchCount());
-
+                .orderBy(qComent.seq.asc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset());
+        List<Coment> list = query.fetch();
+        list.forEach(el -> {
+            el.setChildren(StreamSupport.stream(comentRepo.findAll(new BooleanBuilder().and(qComent.isDel.eq(false).and(qComent.upperSeq.eq(el.getSeq())))).spliterator(), false).collect(Collectors.toList()));
+        });
+        return new PageImpl<Coment>(list, pageable, query.fetchCount());
     }
 
 
@@ -150,6 +169,12 @@ public class BoardService {
         if(params.getSeq() != 0){
             board = boardRepo.findBySeq(params.getSeq());
         }
+
+        int idx = params.getContent().indexOf("src=\"");
+        if(idx != -1){
+            board.setThumbnail(params.getContent().substring(idx+5, params.getContent().indexOf(".do\"", idx)+3));
+        }
+
         board.setSubject(params.getSubject());
         board.setContent(params.getContent());
         board.setNation(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))));
@@ -161,7 +186,9 @@ public class BoardService {
     public Coment comentWrite(ParamVO params){//댓글 다려고 하면 board를 조인
         Board board = Board.builder().build(); //이런 형태가 있어야 한다.
         board.setSeq(params.getBoardSeq()); //시퀀스 가져옴.
-        Coment coment = Coment.builder().build();
+        Coment coment = Coment.builder()
+                .isSecret(params.isSecret())
+                .build();
         if(params.getSeq() != 0){
             coment = comentRepo.findBySeq(params.getSeq());
         }

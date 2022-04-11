@@ -62,6 +62,7 @@ public class BoardController {
     public String boardList(ModelMap model, ParamVO params,
                             @PageableDefault(size = 20, sort = "seq", direction = Sort.Direction.DESC) Pageable pageable) throws Exception{ //modelandview랑 같은형식.
         model.addAttribute("list", boardService.boardList(params,pageable));
+        model.addAttribute("noticelist", boardService.noticeList(params,pageable));
         model.addAttribute("nationName",AuthUtil.getAttr("nationName"));
 
         //list이름으로 view 페이지 사용가능

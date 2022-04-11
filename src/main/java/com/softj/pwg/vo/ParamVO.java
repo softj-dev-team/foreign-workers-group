@@ -27,4 +27,5 @@ public class ParamVO {
     private boolean isMyWritePage;
     private boolean isMyCommentPage;
     private boolean isMyLikePage;
+    private boolean isSecret;
 }

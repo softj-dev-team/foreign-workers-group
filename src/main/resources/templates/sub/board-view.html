@@ -34,8 +34,8 @@
                                 <input type="checkbox" id="notice"><label for="notice">notice</label>
                             </div>
                             <div class="comment-btn-box">
-                                <th:block th:if="${view.user.seq == session.loginVO.seq}">
-                                    <button type="button" class="modify-btn" id="modify" th:value="${view.seq}" ></button>
+                                <th:block th:if="${view.user.seq == session.loginVO.seq or session.loginVO.admin}">
+                                    <button type="button" class="modify-btn" id="modify" th:value="${view.seq}" th:onclick="|ut.redirect('/board/openWrite','seq',${view.seq})|"></button>
                                     <button type="button" class="del-btn"  onclick="modal.open('#deleteModal');"></button>
                                 </th:block>
                             </div>
@@ -49,14 +49,14 @@
                     <div class="total"><span class="total-font">Comments</span><span class="com-total"></span></div>
                    <form id="form">
                     <div class="comment-box">
-                        <input type="checkbox" id="secret"><label for="secret">secret</label>
+                        <input type="checkbox" id="secret" name="isSecret" value="1"><label for="secret">secret</label>
                         <input type="text" placeholder="comment" name="content" ><button type="button" class="com-btn"  onclick="reply()">submit</button>
                         <input type="hidden" name="boardSeq" id="boardSeq" th:value="${view.seq}"><!-- 스크립트에서 사용.-->
                     </div>
                    </form>
                    <input type="hidden"  id ="userSeq"th:value="${session.loginVO.seq}"> <!--세션에있는 값 가져옴.-->
                     <div class="comment-view" id="boardView">
-                        <div class="comment-mo" th:each="comment : ${comment}">
+                        <div class="comment-mo" th:each="comment : ${comment}" th:if="${!comment.secret or (view.user.seq == session.loginVO.seq or comment.user.seq == session.loginVO.seq or session.loginVO.admin)}">
                             <div class="cmt-out">
                                 <div class="comment-img" th:unless="${#strings.isEmpty(comment.user.image)}" th:style="|background-image: url(/api/comFileDownload/${comment.user.image}.do)|"></div>
                                 <div class="comment-img" th:if="${#strings.isEmpty(comment.user.image)}"></div>
@@ -76,37 +76,25 @@
                                         <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
                                         <button class="cmt-btn">comment</button>
                                     </div>
-
-                                    <div class="comment-box cmt-modify">
-                                        <input type="checkbox" id="secret"><label for="secret">secret</label>
-                                        <input type="text" name="comment" id="textContent" placeholder="comment" >
-                                        <button class="mod-close"></button><button type="button" class="com-btn" >submit</button>
-                                    </div>
-
                                 </div>
                             </div>
-                            <div class="cmt-out-re">
-                                <div class="comment-img" th:unless="${#strings.isEmpty(comment.user.image)}" th:style="|background-image: url(/api/comFileDownload/${comment.user.image}.do)|"></div>
-                                <div class="comment-img" th:if="${#strings.isEmpty(comment.user.image)}"></div>
-                                <div class="comment-in">
+                            <div class="cmt-out-re" th:each="child : ${comment.children}">
+                                <div class="comment-img" th:unless="${#strings.isEmpty(child.user.image)}" th:style="|background-image: url(/api/comFileDownload/${child.user.image}.do)|"></div>
+                                <div class="comment-img" th:if="${#strings.isEmpty(child.user.image)}"></div>
+                                <div class="child-in">
                                     <div class="flexwrap">
-                                        <div class="com-in-t" th:text="${comment.user.nickname}" th:classappend="${#strings.isEmpty(comment.user.id) ? '' : 'color-blue'}"></div>
+                                        <div class="com-in-t" th:text="${child.user.nickname}" th:classappend="${#strings.isEmpty(child.user.id) ? '' : 'color-blue'}"></div>
 
                                         <div class="comment-btn-box">
-                                            <th:block th:if="${comment.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
-                                                <button type="button" class="modify-btn" th:value="${comment.seq}"></button>
-                                                <button type="button" class="del-btn" th:value="${comment.seq}"></button>
+                                            <th:block th:if="${child.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
+                                                <button type="button" class="modify-btn" th:value="${child.seq}"></button>
+                                                <button type="button" class="del-btn" th:value="${child.seq}"></button>
                                             </th:block>
                                         </div>
                                     </div>
-                                    <div class="com-con" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
+                                    <div class="com-con" th:text="${child.content}"></div> <!--댓글 시퀀스,내용-->
                                     <div class="list-f">
-                                        <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
-                                    </div>
-
-                                    <div class="comment-box cmt-modify">
-                                        <input type="text" name="comment" id="textContent" placeholder="comment" >
-                                        <button class="mod-close"></button><button type="button" class="com-btn" >submit</button>
+                                        <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(child.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
                                     </div>
                                 </div>
                             </div>
@@ -288,11 +276,6 @@
                                     html += '<div class="com-con">'+el.content+'</div>'
                                     html += '<div class="list-f">'
                                     html += '<span class="time"></span>'
-                                    html += '</div>'
-                                    html += '<div class="comment-box cmt-modify">'
-                                    html += '<input type="text" name="comment" id="textContent" placeholder="comment">'
-                                    html += '<button class="mod-close"></button>'
-                                    html += '<button type="button" class="com-btn">submit</button>'
                                     html += '</div>'
                                     html += '</div>'
                                     html += '</div>'

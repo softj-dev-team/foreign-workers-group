@@ -11,9 +11,29 @@
             </div>
         </div>
         <div class="board-wrap clearfix" id="boardList">
+            <div class="notice-list" th:each="el : ${noticelist}">
+                <div class="list-in clearfix">
+                    <div class="list-t">
+                        <div class=" clearfix">
+                            <a th:href="'/board/view?seq='+${el.seq}">
+                                <span class="ellipsis n-tag " th:text="${el.subject}">For Foreign workers this is an announcement Certainly read</span>
+                            </a>
+                        </div>
+                        <div class="list-f">
+                            <span class="name" th:text="${el.user.nickname}" th:classappend="${#strings.isEmpty(el.user.id) ? '' : 'color-blue'}">name</span>
+                            <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(el.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
+                            <span class="view" th:text="${el.views}">121,103</span>
+                        </div>
+                    </div>
+                    <div class="cmt">
+                        <span th:text="${el.likeCount}"></span>
+                    </div>
+                </div>
+            </div>
             <div class="board-list" th:each="el : ${list}">
                 <div class="list-in clearfix">
                     <a th:href="'/board/view?seq='+${el.seq}">
+                        <div th:unless="${#strings.isEmpty(el.thumbnail)}" class="board-img" th:style="|background-image: url('${el.thumbnail}');|"></div>
                         <div class="list-t">
                                 <div class=" clearfix"><!--el.seq리스트를 가져온거.-->
                                     <span class="ellipsis " th:text="${el.subject}"></span>

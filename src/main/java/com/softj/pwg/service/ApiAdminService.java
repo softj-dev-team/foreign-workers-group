@@ -51,6 +51,7 @@ public class ApiAdminService {
         }
         if(u.isAdmin() && u.getPassword().equals(Hashing.sha256().hashString(params.getPassword(), StandardCharsets.UTF_8).toString())){
             AuthUtil.setAttr("adminVO",u);
+            AuthUtil.setAttr("loginVO",u);
             return u;
         }
         return null;

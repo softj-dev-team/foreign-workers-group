@@ -10,6 +10,7 @@ $(function(){
         loading(0);
         if(xhr.status == 200 && xhr.responseText.startsWith("<!--")){
             modal.alert("Need Login");
+            ut.redirect('/login');
         }
     });
 });
@@ -123,5 +124,5 @@ function loading(isShow){
 }
 function copy(url){
     ut.copyStr(url ? url : location.href);
-    modal.alert("copy complete!");
+    modal.alert("Copy complete!<br>Pass the copied URL to your friends.");
 }
