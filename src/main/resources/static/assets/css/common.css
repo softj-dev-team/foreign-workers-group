@@ -145,31 +145,31 @@ input[type=radio]:checked+label::before{
 input[type=checkbox]{display: none;}
 input[type=checkbox]+label{
     position: relative;
-    padding-left: 45px;
+    padding-left: 24px;
     margin-right: 5px;
-    font-size: 20px;
+    font-size: 13px;
     cursor: pointer;
-    padding-top: 11px;
+    line-height: 35px;
 }
 input[type=checkbox]+label::before{
     content: '';
     display:inline-block;
     position:absolute;
-    top:3px;
+    top:8px;
     left:0;
-    width:38px;
-    height:38px;
+    width:18px;
+    height:18px;
     border-radius: 3px;
-    background:url(../img/icon-Gcheck.png) no-repeat center / cover;;
+    border:1px solid;
 }
 input[type=checkbox]:checked+label::after{
     content: '';
     display:inline-block;
     position:absolute;
-    top: 3px;
+    top: 8px;
     left: 0px;
-    width:38px;
-    height:38px; 
+    width:20px;
+    height:20px;
     border-radius: 2px;
     background:url(../img/icon-Bcheck.png) no-repeat center / cover;
 }
@@ -864,6 +864,22 @@ div.cmt{
     margin-left: 10px;
     float: right;
     order: 1;
+}
+.notice-box{
+    float:right;
+}
+.notice-box input[type=checkbox]+label::before{
+    width:18px;
+    height:18px;
+    top:-1px;
+}
+.notice-box input[type=checkbox]:checked+label::after{
+    width:20px;
+    height:20px;
+    top:-1px;
+}
+.notice-box input[type=checkbox]+label{
+    padding-left:24px;
 }
 .view-md {
     margin: 10px 0;
