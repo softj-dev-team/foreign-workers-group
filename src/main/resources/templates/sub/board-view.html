@@ -86,27 +86,18 @@
                                 </div>
                             </div>
                             <div class="cmt-out-re">
-                                <div class="comment-img" th:unless="${#strings.isEmpty(comment.user.image)}" th:style="|background-image: url(/api/comFileDownload/${comment.user.image}.do)|"></div>
-                                <div class="comment-img" th:if="${#strings.isEmpty(comment.user.image)}"></div>
+                                <div class="comment-img" style="background-image: url(../assets/img/snowmen.jpg);"></div>
                                 <div class="comment-in">
                                     <div class="flexwrap">
-                                        <div class="com-in-t" th:text="${comment.user.nickname}" th:classappend="${#strings.isEmpty(comment.user.id) ? '' : 'color-blue'}"></div>
-
+                                        <div class="com-in-t">name</div>
                                         <div class="comment-btn-box">
-                                            <th:block th:if="${comment.user.seq == session.loginVO.seq}"> <!--댓글작성자만 볼 수 있게!-->
-                                                <button type="button" class="modify-btn" th:value="${comment.seq}"></button>
-                                                <button type="button" class="del-btn" th:value="${comment.seq}"></button>
-                                            </th:block>
+                                            <button type="button" class="modify-btn"></button>
+                                            <button type="button" class="del-btn"></button>
                                         </div>
                                     </div>
-                                    <div class="com-con" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
+                                    <div class="com-con">Lorem ipsum dolor sit amet consectetur adipisicing elit.</div>
                                     <div class="list-f">
-                                        <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
-                                    </div>
-
-                                    <div class="comment-box cmt-modify">
-                                        <input type="text" name="comment" id="textContent" placeholder="comment" >
-                                        <button class="mod-close"></button><button type="button" class="com-btn" >submit</button>
+                                        <span class="time">14:23</span>
                                     </div>
                                 </div>
                             </div>
