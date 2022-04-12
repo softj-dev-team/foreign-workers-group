@@ -65,7 +65,8 @@ public class ApiController {
     }
     //댓글 작성, 수정 완료
     @PostMapping("/setCommentWrite")
-    public Response setCommentWrite(ParamVO params) {
+    public Response setCommentWrite(ParamVO params,@RequestParam(value = "isSecret",defaultValue = "false") boolean isSecret) {
+        params.setSecret(isSecret);
         return Response.builder()
                 .data(boardService.comentWrite(params))
                 .build();
@@ -128,6 +129,13 @@ public class ApiController {
     public Response fileUpload(ParamVO params, MultipartHttpServletRequest request) throws Exception{
         return Response.builder()
                 .data(boardService.fileUpload(params, request))
+                .build();
+    }
+
+    @PostMapping("/setNoticeBoard")
+    public Response setNoticeBoard(ParamVO params){
+        return Response.builder()
+                .data(boardService.setNoticeBoard(params))
                 .build();
     }
 }

@@ -28,4 +28,5 @@ public class ParamVO {
     private boolean isMyCommentPage;
     private boolean isMyLikePage;
     private boolean isSecret;
+    private long upperSeq;
 }
