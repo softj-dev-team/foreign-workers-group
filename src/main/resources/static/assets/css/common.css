@@ -462,6 +462,7 @@ input[type=checkbox]:checked+label::before{
     background: #3379AE;
     text-align: center;
     position: fixed;
+    z-index:99;
 }
 .hd-in{
     max-width: 1024px;
@@ -1710,6 +1711,9 @@ i.note-icon-file svg{
         right: 95px;
         width: 40px;
         height: 40px;
+    }
+    .comment-box .mod-close {
+        right: 74px;
     }
     .mod-close::before {
         top: 7px;
