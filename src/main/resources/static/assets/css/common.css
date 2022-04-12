@@ -806,7 +806,6 @@ div.cmt{
 .view-top-in .top-left{
     float: left;
     flex: 1;
-    width: calc(100% - 88px);
 }
 .view-top-in .top-right{
     float: right;
@@ -819,6 +818,7 @@ div.cmt{
     height: 42px;
     float: left;
     margin-right: 10px;
+    border-radius: 100px;
 }
 .left-in{
     float: left;
@@ -827,7 +827,6 @@ div.cmt{
 }
 .view-name{
     width: 100%;
-    float: left;
 }
 .view-info{
     float: left;
