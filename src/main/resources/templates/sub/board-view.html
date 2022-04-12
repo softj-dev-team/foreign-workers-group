@@ -74,7 +74,7 @@
                                     <div class="com-con" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
                                     <div class="list-f">
                                         <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
-                                        <button class="cmt-btn">comment</button>
+                                        <button class="cmt-btn">reply</button>
                                     </div>
                                     <div class="comment-box cmt-modify">
                                         <input type="text" placeholder="comment" class="rereplyText"><button class="mod-close"></button><button type="button" class="com-btn" th:onclick="|rereply('${comment.seq}',this)|">submit</button>

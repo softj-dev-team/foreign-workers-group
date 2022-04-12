@@ -666,7 +666,7 @@ input[type=checkbox]:checked+label::before{
 }
 /* 게시판 */
 .board-wrap > div{
-    padding: 0 15px;
+    padding: 0 10px;
 }
 .board-wrap > div .list-in {
     padding: 15px 0;
@@ -716,13 +716,15 @@ input[type=checkbox]:checked+label::before{
     margin-right: 5px;
 }
 .n-tag::before {
-    content: "공지";
+    content: "Notice";
+    display: inline-block;
     font-size: 10px;
     padding: 2px 5px;
     border-radius: 6px;
     background: #F5443D;
     color: #ffffff;
     margin-right: 5px;
+    vertical-align: top;
 }
 .list-f {
     margin-top: 7px;
@@ -790,7 +792,7 @@ div.cmt{
 /* 게시글 */
 .board-wrap > div.view-in{
     height: 100%;
-    padding: 15px;
+    padding: 15px 10px;
 }
 .view-in .view-top h3{
     font-size: 18px;
@@ -952,12 +954,21 @@ div.cmt{
 .cmt-btn {
     width: auto;
     font-size: 12px;
-    color: #bebebe;
+    color: #3379AE;
     padding: 0;
     height: auto;
     line-height: normal;
     margin-left: 5px;
     font-family: 'Pretendard-Regular' !important;
+}
+.cmt-btn::before{
+    display: inline-block;
+    content: "";
+    margin-right: 2px;
+    width: 14px;
+    height: 14px;
+    background: url(../img/reply.png)no-repeat center / contain;
+    vertical-align: bottom;
 }
 .cmt-out-re{
     display: flex;
@@ -1789,7 +1800,7 @@ i.note-icon-file svg{
         font-size: 20px;
     }
     .board-wrap > div.view-in {
-        padding: 30px;
+        padding: 20px;
     }
     .view-md {
         padding: 25px 20px;
