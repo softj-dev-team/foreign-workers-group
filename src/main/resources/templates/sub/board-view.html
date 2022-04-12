@@ -30,8 +30,8 @@
                             <div class="cmt">
                                 <span id="likeCount" th:text="${likeCount}"></span>
                             </div>
-                            <div clsss="mr10 notice-box">
-                                <input type="checkbox" id="notice"><label for="notice">notice</label>
+                            <div clsss="mr10 notice-box" th:if="${session.loginVO.admin}">
+                                <input type="checkbox" id="notice" th:checked="${view.notice}"><label for="notice">notice</label>
                             </div>
                             <div class="comment-btn-box">
                                 <th:block th:if="${view.user.seq == session.loginVO.seq or session.loginVO.admin}">
@@ -49,7 +49,7 @@
                     <div class="total"><span class="total-font">Comments</span><span class="com-total"></span></div>
                    <form id="form">
                     <div class="comment-box">
-                        <input type="checkbox" id="secret" name="isSecret" value="1"><label for="secret">secret</label>
+                        <input type="checkbox" id="secret" name="isSecret" value="true"><label for="secret">secret</label>
                         <input type="text" placeholder="comment" name="content" ><button type="button" class="com-btn"  onclick="reply()">submit</button>
                         <input type="hidden" name="boardSeq" id="boardSeq" th:value="${view.seq}"><!-- 스크립트에서 사용.-->
                     </div>
@@ -76,12 +76,15 @@
                                         <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
                                         <button class="cmt-btn">comment</button>
                                     </div>
+                                    <div class="comment-box cmt-modify">
+                                        <input type="text" placeholder="comment" class="rereplyText"><button class="mod-close"></button><button type="button" class="com-btn" th:onclick="|rereply('${comment.seq}',this)|">submit</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="cmt-out-re" th:each="child : ${comment.children}">
                                 <div class="comment-img" th:unless="${#strings.isEmpty(child.user.image)}" th:style="|background-image: url(/api/comFileDownload/${child.user.image}.do)|"></div>
                                 <div class="comment-img" th:if="${#strings.isEmpty(child.user.image)}"></div>
-                                <div class="child-in">
+                                <div class="comment-in">
                                     <div class="flexwrap">
                                         <div class="com-in-t" th:text="${child.user.nickname}" th:classappend="${#strings.isEmpty(child.user.id) ? '' : 'color-blue'}"></div>
 
@@ -161,7 +164,6 @@
             var reply = $(this).parent().parent().parent().children('.com-con');
             var replyT = reply.text();
             var replySeq = $(this).val(); /* th value 시퀀스값*/
-            console.log(replySeq);
             /*수정 버튼 눌렀을 때*/
             if(reply.css('display') == 'none'){
                 reply.css('display', 'flex');
@@ -180,8 +182,12 @@
         });
     </script>
     <script>
-        console.log()
         /* 0. variable */
+        /*<![CDATA[*/
+        var isAdmin = /*[[${session.loginVO.admin}]]*/ false;
+        var boardUserSeq = /*[[${view.user.seq}]]*/ '';
+        var myUserSeq = /*[[${session.loginVO.seq}]]*/ '';
+        /*]]>*/
 
         // /* 1. on load */
          /*글삭제*/
@@ -203,21 +209,10 @@
             });
         });
 
-        // $(document).on('click','.modify-btn',function (){
-        //     let boardSeq = $('input[name=boardSeq]').val();
-        //     //let content= $(event).prev().val();/*textarea댓글내용*/
-        //     $.post('/api/setCommentWrite' , {content,boardSeq:boardSeq},function (Response) {
-        //         location.reload();
-        //     });
-        //
-        // });
         //댓글수정
         function modifyCommet(event,replySeq){/*this랑 시퀀스넘어옴 (댓글수정)*/
-            console.log(replySeq);
             let boardSeq = $('input[name=boardSeq]').val();
             let content= $(event).prev().val();/*textarea댓글내용*/
-            console.log(boardSeq);
-            console.log(content);
             $.post('/api/setCommentWrite' , {content,seq:replySeq,boardSeq:boardSeq},function (Response) {
                 location.href="/board/view?seq="+boardSeq;
             });
@@ -239,54 +234,105 @@
                 /* 3. event listener*/
             });
 
+            $("#notice").on('click',function(){
+                $.post('/api/setNoticeBoard',{seq: $('input[name=boardSeq]').val()},function(res){
+                    location.reload();
+                })
+            });
+
             var isLast = false;
             var page = 0; //0페이지부터
-                //스크롤 할때 이벤트 감지 게시글을 ajax통해
-                $(window).scroll(function () {
-                    if (isLast) {
-                        return;
-                    }
-                    let seq = $('input[name=boardSeq]').val(); //어느 글인지 알기 위해서
-                    //만약 스크롤 끝까지 내렸으면
-                    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-                        page++;
-                        console.log('다음페이지!! pageNumber: ', page);
-                        $.post('/api/getCommentPage', {page: page, seq: seq}, function (Response) {
-                            console.log('response',Response);
-                            isLast = Response.data.last;
-                            var data = Response.data.content;// console에 data에 찍힌content //전체데이터담겨있음
-                            var html = "";
-                            //반복문 밑에서 가져옴
-                            //for(var i=0; i<array.length; i++) ->for(var i in array)
-                            if (data.length > 0) {
-                                for (var el of data) { //값이 el에 하나하나 담겨있음 el=i번째 인덱스 그 길이는 data만큼
-                                    html += '<div class="comment-mo">'
-                                    html += '<div class="cmt-out">'
-                                    html += `<div class="comment-img" ${ut.isEmpty(el.user.image) ? '' : 'style="background-image: url(/api/comFileDownload/'+el.user.image+'.do)"'}></div>`
-                                    html += '<div class="comment-in">'
-                                    html += '<div class="flexwrap">'
-                                    html += '<div class="com-in-t '+(el.user.id ? 'color-blue' : '')+'">'+el.user.nickname+'</div>'
-                                    html += '<div class="comment-btn-box">'
-                                    if (el.user.seq == $('#userSeq').val()) {//user를 hidden로 숨겨넣고 가져옴
-                                        html += '<button type="button" class="modify-btn" value="'+el.seq+'"></button>'
-                                        html += '<button type="button" class="del-btn" value="'+el.seq+'"></button>'
-                                    }
-                                    html += '</div>'
-                                    html += '</div>'
-                                    html += '<div class="com-con">'+el.content+'</div>'
-                                    html += '<div class="list-f">'
-                                    html += '<span class="time"></span>'
-                                    html += '</div>'
-                                    html += '</div>'
-                                    html += '</div>'
-                                    html += '</div>'
-                                };
-                                $("#boardView").append(html);
-                            };
-                        });
-                    };
-                });
+
+            $(window).scroll(function () {
+                if (isLast) {
+                    return;
+                }
+                let seq = $('input[name=boardSeq]').val(); //어느 글인지 알기 위해서
+                //만약 스크롤 끝까지 내렸으면
+                if ($(window).scrollTop() >= $(document).height() - $(window).height()) {
+                    page++;
+                    console.log('다음페이지!! pageNumber: ', page);
+                    $.post('/api/getCommentPage', {page: page, seq: seq}, function (Response) {
+                        console.log('response',Response);
+                        isLast = Response.data.last;
+                        var data = Response.data.content;// console에 data에 찍힌content //전체데이터담겨있음
+                        var html = "";
+                        if (ut.isEmpty(data)) return;
+
+                        for (var el of data) {
+                            if(el.secret && !isAdmin && myUserSeq != el.user.seq) continue;
+                            html += `
+                            <div class="comment-mo">
+                                <div class="cmt-out">
+                                    <div class="comment-img" style="${ut.isEmpty(el.user.image) ? '' : 'background-image: url(/api/comFileDownload/'+el.user.image+'.do)'}"></div>
+                                    <div class="comment-in">
+                                        <div class="flexwrap">
+                                            <div class="com-in-t ${el.user.id ? 'color-blue' : ''}">${el.user.nickname}</div>
+
+                                            <div class="comment-btn-box">`;
+                            if(isAdmin || el.user.seq == myUserSeq) {
+                                html += `
+                                                <button type="button" class="modify-btn" value="${el.seq}"></button>
+                                                <button type="button" class="del-btn" value="${el.seq}"></button>`;
+                            }
+                            html += `
+                                            </div>
+                                        </div>
+                                        <div class="com-con">${el.content}</div>
+                                        <div class="list-f">
+                                            <span class="time">${new Date(el.createdAt).format('yyyy-MM-dd &nbsp;THH:mm:ss')}</span>
+                                        </div>
+                                    </div>
+                                </div>`;
+
+                            //대댓글
+                            if(ut.isEmpty(el.children)) continue;
+
+                            el.children.forEach(function(el2){
+                                html += `
+                                <div class="cmt-out-re">
+                                    <div class="comment-img" style="${ut.isEmpty(el2.user.image) ? '' : 'background-image: url(/api/comFileDownload/'+el2.user.image+'.do)'}"></div>
+                                    <div class="child-in">
+                                        <div class="flexwrap">
+                                            <div class="com-in-t ${el2.user.id ? 'color-blue' : ''}">${el2.user.nickname}</div>
+
+                                            <div class="comment-btn-box">`;
+                                if(isAdmin || el2.user.seq == myUserSeq) {
+                                    html += `
+                                                <button type="button" class="modify-btn" value="${el2.seq}"></button>
+                                                <button type="button" class="del-btn" value="${el2.seq}"></button>`;
+                                }
+                                html += `
+                                            </div>
+                                        </div>
+                                        <div class="com-con">${el2.content}</div>
+                                        <div class="list-f">
+                                            <span class="time">${new Date(el2.createdAt).format('yyyy-MM-dd &nbsp;THH:mm:ss')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `
+                            })
+                        }
+
+                        $("#boardView").append(html);
+                    });
+                }
             });
+        });
+
+        function rereply(upperSeq, obj){
+            let value = $(obj).siblings('.rereplyText').val();
+            let formData = {
+                boardSeq: $("#boardSeq").val(),
+                upperSeq: upperSeq,
+                content: value
+            }
+            $.post('/api/setCommentWrite', formData, function (Response) {
+                location.reload();
+            });
+        }
     </script>
 
 </th:block>

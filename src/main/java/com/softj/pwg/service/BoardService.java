@@ -107,9 +107,7 @@ public class BoardService {
         board.increaseViewCount();
         return boardRepo.save(board);
     }
-    //댓글리스트 어느글에 누가 댓글을 달았는지 알아야 된다.
     public Page<Coment> boardComent(ParamVO params,Pageable pageable) {
-        //댓글 목록 조회하는 메서드<삭제안된 댓글만 조회해야 함.어떤글에 어떤 댓글 구현해야 하는지.>
         QComent qComent=QComent.coment;
         QBoard qBoard=QBoard.board;
         QUser qUser=QUser.user;
@@ -122,7 +120,7 @@ public class BoardService {
             where.and(qBoard.nation.eq(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation"))))); //해당 카테고리 글만 보여지게.
             where.and(qBoard.user.eq(user));
             where.and(qComent.user.ne(user));
-            where.and(qComent.upperSeq.isNull());
+            where.and(qComent.upperSeq.isNull().or(qComent.upperSeq.eq(0L)));
             JPAQuery<Coment> query = jpaQueryFactory.select(Projections.fields(Coment.class,
                         qComent.content,
                         qUser,
@@ -145,8 +143,9 @@ public class BoardService {
             return new PageImpl<Coment>(list, pageable, query.fetchCount());
         }else{
             where.and(qComent.board.seq.eq(params.getSeq()));//특정게시글에 댓글만 조회하기 위한거.
-            where.and(qComent.upperSeq.isNull());
+            where.and(qComent.upperSeq.isNull().or(qComent.upperSeq.eq(0L)));
         }
+
         JPAQuery<Coment> query = jpaQueryFactory
                 .selectFrom(qComent)
                 .join(qComent.user)
@@ -188,6 +187,7 @@ public class BoardService {
         board.setSeq(params.getBoardSeq()); //시퀀스 가져옴.
         Coment coment = Coment.builder()
                 .isSecret(params.isSecret())
+                .upperSeq(params.getUpperSeq())
                 .build();
         if(params.getSeq() != 0){
             coment = comentRepo.findBySeq(params.getSeq());
@@ -267,5 +267,11 @@ public class BoardService {
         }
 
         return result;
+    }
+
+    public Board setNoticeBoard(ParamVO params){
+        Board save = boardRepo.findBySeq(params.getSeq());
+        save.setNotice(!save.isNotice());
+        return boardRepo.save(save);
     }
 }
