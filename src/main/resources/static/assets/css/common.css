@@ -984,6 +984,15 @@ div.cmt{
 .cmt-modify input{
     padding-right: 35px;
 }
+.com-secret::before{
+    display: inline-block;
+    content: "";
+    margin-right: 3px;
+    width: 14px;
+    height: 14px;
+    background: url(../img/i-lock.png)no-repeat center / contain;
+    vertical-align: bottom;
+}
 .mod-close{
     position: absolute;
     top: 2px;
