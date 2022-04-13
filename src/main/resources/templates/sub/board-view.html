@@ -56,7 +56,7 @@
                    </form>
                    <input type="hidden"  id ="userSeq"th:value="${session.loginVO.seq}"> <!--세션에있는 값 가져옴.-->
                     <div class="comment-view" id="boardView">
-                        <div class="comment-mo" th:each="comment : ${comment}" th:if="${!comment.secret or (view.user.seq == session.loginVO.seq or comment.user.seq == session.loginVO.seq or session.loginVO.admin)}">
+                        <div class="comment-mo" th:each="comment : ${comment}">
                             <div class="cmt-out">
                                 <div class="comment-img" th:unless="${#strings.isEmpty(comment.user.image)}" th:style="|background-image: url(/api/comFileDownload/${comment.user.image}.do)|"></div>
                                 <div class="comment-img" th:if="${#strings.isEmpty(comment.user.image)}"></div>
@@ -71,7 +71,7 @@
                                            </th:block>
                                         </div>
                                     </div>
-                                    <div class="com-con" th:text="${comment.content}"></div> <!--댓글 시퀀스,내용-->
+                                    <div class="com-con" th:classappend="${comment.secret ? 'com-secret' : ''}" th:text="${(comment.secret and !(view.user.seq == session.loginVO.seq or comment.user.seq == session.loginVO.seq or session.loginVO.admin)) ? 'This is a secret comment.' : comment.content}"></div> <!--댓글 시퀀스,내용-->
                                     <div class="list-f">
                                         <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
                                         <button class="cmt-btn">reply</button>

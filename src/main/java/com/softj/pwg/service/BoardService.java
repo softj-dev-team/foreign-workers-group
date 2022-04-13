@@ -46,9 +46,34 @@ public class BoardService {
 
     public List<Board> noticeList(ParamVO params, Pageable pageable) {
         QBoard qBoard = QBoard.board;
+        QComent qComent = QComent.coment;
         BooleanBuilder where = new BooleanBuilder(qBoard.isDel.eq(false))
                 .and(qBoard.isNotice.eq(true));
-        return StreamSupport.stream(boardRepo.findAll(where).spliterator(), false).collect(Collectors.toList());
+        JPAQuery<Board> query = jpaQueryFactory.select(Projections.fields(Board.class,
+                qBoard.seq,
+                qBoard.thumbnail,
+                qBoard.createdAt,
+                qBoard.updatedAt,
+                qBoard.isDel,
+                qBoard.createdId,
+                qBoard.updatedId,
+                qBoard.subject,
+                qBoard.nation,
+                qBoard.content,
+                qBoard.views,
+                qBoard.user,
+                ExpressionUtils.as(
+                        JPAExpressions.select(qComent.count())
+                                .from(qComent)
+                                .where(qComent.board.eq(qBoard)),"likeCount"))
+        )
+                .from(qBoard)
+                .where(where)
+                .orderBy(qBoard.seq.desc())
+                .limit(pageable.getPageSize())//조회할 개수 지정
+                .offset(pageable.getOffset());//시작index지정offset
+
+        return query.fetch();
     }
 
     public Page<Board> boardList(ParamVO params, Pageable pageable) {
@@ -93,9 +118,6 @@ public class BoardService {
                                 .orderBy(qBoard.seq.desc())
                                 .limit(pageable.getPageSize())//조회할 개수 지정
                                 .offset(pageable.getOffset());//시작index지정offset
-
-//        List<Board> list = query.fetch();
-//        long count = query.fetchCount();
 
         return new PageImpl<Board>(query.fetch(), pageable, query.fetchCount());
 
