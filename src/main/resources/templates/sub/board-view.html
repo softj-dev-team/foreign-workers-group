@@ -30,7 +30,7 @@
                             <div class="cmt">
                                 <span id="likeCount" th:text="${likeCount}"></span>
                             </div>
-                            <div clsss="mr10 notice-box" th:if="${session.loginVO.admin}">
+                            <div class="notice-box" th:if="${session.loginVO.admin}">
                                 <input type="checkbox" id="notice" th:checked="${view.notice}"><label for="notice">notice</label>
                             </div>
                             <div class="comment-btn-box">

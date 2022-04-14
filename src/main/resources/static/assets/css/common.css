@@ -869,6 +869,7 @@ div.cmt{
 }
 .notice-box{
     float:right;
+    margin-right:5px;
 }
 .notice-box input[type=checkbox]+label::before{
     width:18px;
