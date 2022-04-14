@@ -48,6 +48,7 @@ public class BoardService {
         QBoard qBoard = QBoard.board;
         QComent qComent = QComent.coment;
         BooleanBuilder where = new BooleanBuilder(qBoard.isDel.eq(false))
+                .and(qBoard.nation.eq(Long.parseLong(String.valueOf(AuthUtil.getAttr("nation")))))
                 .and(qBoard.isNotice.eq(true));
         JPAQuery<Board> query = jpaQueryFactory.select(Projections.fields(Board.class,
                 qBoard.seq,
@@ -205,17 +206,18 @@ public class BoardService {
 
     }
     public Coment comentWrite(ParamVO params){//댓글 다려고 하면 board를 조인
-        Board board = Board.builder().build(); //이런 형태가 있어야 한다.
+        Board board = Board.builder()
+                .build(); //이런 형태가 있어야 한다.
         board.setSeq(params.getBoardSeq()); //시퀀스 가져옴.
         Coment coment = Coment.builder()
                 .isSecret(params.isSecret())
+                .user((User) AuthUtil.getAttr("loginVO"))
                 .upperSeq(params.getUpperSeq())
                 .build();
         if(params.getSeq() != 0){
             coment = comentRepo.findBySeq(params.getSeq());
         }
         coment.setContent(params.getContent());
-        coment.setUser((User) AuthUtil.getAttr("loginVO"));
         coment.setBoard(board);
         return comentRepo.save(coment);
     }

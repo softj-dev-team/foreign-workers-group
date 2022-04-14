@@ -14,6 +14,10 @@ public class PwgInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         User u = AuthUtil.getLoginVO();
         if(Objects.isNull(u) || u.getSeq() == 0) {
+            if(request.getRequestURI().startsWith("/api")){
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return false;
+            }
             response.sendRedirect("/login");
             return false;
         }

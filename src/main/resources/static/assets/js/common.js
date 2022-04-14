@@ -1,14 +1,17 @@
 $(function(){
     $(document).ajaxError(function myErrorHandler(event, xhr, ajaxOptions, thrownError) {
         console.log(event, xhr, ajaxOptions, thrownError);
-        modal.alert("Error");
+        modal.alert("Error "+xhr.status);
+        if(xhr.status == 403){
+            ut.redirect('/login');
+        }
     });
     $(document).ajaxSend(function myErrorHandler(event, xhr, ajaxOptions, thrownError) {
         loading(1);
     });
     $(document).ajaxComplete(function myCompleteHandler(event, xhr, ajaxOptions, thrownError) {
         loading(0);
-        if(xhr.status == 200 && xhr.responseText.startsWith("<!--")){
+        if(xhr.status == 302 || (xhr.status == 200 && xhr.responseText.startsWith("<!--"))){
             modal.alert("Need Login");
             ut.redirect('/login');
         }
