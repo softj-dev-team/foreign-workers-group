@@ -984,6 +984,9 @@ div.cmt{
 .cmt-modify input{
     padding-right: 35px;
 }
+.com-secret{
+    color: #3379AE;
+}
 .com-secret::before{
     display: inline-block;
     content: "";
