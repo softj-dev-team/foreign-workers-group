@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 30MB
+      max-request-size: 30MB
   jackson:
     serialization:
       fail-on-empty-beans: false
@@ -36,11 +41,6 @@ spring:
     username: pwg
     password: '!1qazsoftj'
 
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 20MB
-      max-request-size: 20MB
   mail:
     host: smtp.gmail.com
     port: 587
@@ -103,13 +103,6 @@ spring:
     url: jdbc:mariadb://pwg.ckjjbku0zjdl.ap-northeast-2.rds.amazonaws.com:3306/pwg
     username: pwg
     password: '!1qazsoftj'
-
-  servlet:
-    multipart:
-      enabled: true
-
-      max-file-size: 20MB
-      max-request-size: 20MB
 
   mail:
     host: smtp.gmail.com
