@@ -223,7 +223,7 @@
         function reply() {
             let formData = $("#form").serialize();
             $.post('/api/setCommentWrite', formData, function (Response) {
-                // location.reload();
+                location.reload();
             });
         };
 
