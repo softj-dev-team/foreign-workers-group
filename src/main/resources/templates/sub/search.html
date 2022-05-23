@@ -41,7 +41,7 @@
 
             /* 2. event listener*/
             $(window).scroll(function() {
-                if (!isLast && ($(window).scrollTop() == $(document).height() - $(window).height())) {
+                if (!isLast && (isBottom())) {
                     getList()
                 }
             });

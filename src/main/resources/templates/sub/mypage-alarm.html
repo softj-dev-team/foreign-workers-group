@@ -33,7 +33,7 @@
                     return;
                 }
                 //만약 스크롤 끝까지 내렸으면
-                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                if (isBottom()) {
                     getPage();
                 };
             });

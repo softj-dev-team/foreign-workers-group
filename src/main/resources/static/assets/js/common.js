@@ -129,3 +129,6 @@ function copy(url){
     ut.copyStr(url ? url : location.href);
     modal.alert("Copy complete!<br>Pass the copied URL to your friends.");
 }
+function isBottom(){
+    return -200 < $(window).scrollTop() - ($(document).height() - $(window).height()) && $(window).scrollTop() - ($(document).height() - $(window).height()) < 200
+}

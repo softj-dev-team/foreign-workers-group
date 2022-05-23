@@ -73,12 +73,11 @@
                     return;
                 }
                 //만약 스크롤 끝까지 내렸으면
-                if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+                if (isBottom()) {
                     page++;
                     $.post('/api/getPage',{page:page},function(Response) {
                         isLast = Response.data.last;
                         $('#resultCount').text(Response.data.totalElements);
-                        console.log(Response);
                         var data = Response.data.content;// console에 data에 찍힌content
                         var html = "";
                         //데이터 수만큼 반복문 돌리는거 그 이름을 el로 받음.
@@ -86,23 +85,28 @@
                             if(data.length>0){
                                 //loading(1);
                                 for (var el of data) {
-                                    html+='<div class="board-list">'
-                                    html+='<div class="list-in clearfix">'
-                                    html+='<div class="list-t">'
-                                    html+='<div class=" clearfix">'//el.seq리스트를 가져온거
-                                    html+='<a href="/board/view?seq='+el.seq+'"class="ellipsis ">'+el.subject+'</a>'
-                                    html+='</div>'
-                                    html+='<div class="list-f">'
-                                    html+=' <span class="name '+(el.user.id ? 'color-blue' : '')+'">'+el.user.nickname+'</span>'
-                                    html+=' <span class="time">'+new Date(el.createdAt).format('yyyy-MM-dd &nbsp;THH:mm:ss')+'</span>'
-                                    html+=' <span class="view">'+el.views+'</span>'
-                                    html+='</div>'
-                                    html+='</div>'
-                                    html+='<div class="cmt">'
-                                    html+='<span>'+el.likeCount+'</span>'
-                                    html+='</div>'
-                                    html+='</div>'
-                                    html+='</div>'
+                                    html += `
+                                        <div class="board-list">
+                                            <div class="list-in clearfix">
+                                                <a href="/board/view?seq=+${el.seq}">
+                                                    ${el.thumbnail ? '<div class="board-img" style="background-image: url(\''+el.thumbnail+'\');"></div>' : ''}
+                                                    <div class="list-t">
+                                                            <div class=" clearfix"><!--el.seq리스트를 가져온거.-->
+                                                                <span class="ellipsis " >${el.subject}</span>
+                                                            </div>
+                                                            <div class="list-f">
+                                                                <span class="name ${el.user.id ? 'color-blue' : ''}">${el.user.nickname}</span>
+                                                                <span class="time" >${new Date(el.createdAt).format('yyyy-MM-ddTHH:mm:ss')}</span>
+                                                                <span class="view" >${el.views}</span>
+                                                            </div>
+                                                    </div>
+                                                </a>
+                                                <div class="cmt">
+                                                    <span>${el.likeCount}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
                                 }
 
                                 $("#boardList").append(html);
