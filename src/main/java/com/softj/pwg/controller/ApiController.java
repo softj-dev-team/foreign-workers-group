@@ -75,7 +75,6 @@ public class ApiController {
     @PostMapping("/setRemoveComent") //댓글삭제
     public void setRemoveComent(ParamVO params) {
          boardService.deleteComment(params.getSeq());//type long . 이미 내장된 것.primary key.
-
     }
 
     @PostMapping("/setRemoveBoard") //게시글 삭제

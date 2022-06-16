@@ -26,12 +26,20 @@ spring:
   profiles: dev
   main:
     allow-bean-definition-overriding: true
+  thymeleaf: # Thymeleaf
+    cache: false
+    mode: HTML
+    encoding: UTF-8
+    prefix: file:src/main/resources/templates/
+  resources: # Static resources
+    static-locations: file:src/main/resources/static/
+    cache:
+      period: 0
 
   devtools:
     livereload:
       enabled: true
-  thymeleaf:
-    cache: false
+
   freemarker:
     cache: false
 

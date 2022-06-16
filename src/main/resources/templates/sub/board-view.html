@@ -28,7 +28,8 @@
                         </div>
                         <div class="top-right">
                             <div class="cmt">
-                                <span id="likeCount" th:text="${likeCount}"></span>
+<!--                                <span id="likeCount" th:text="${likeCount}"></span>-->
+                                <span th:text="${view.likeCount}"></span>
                             </div>
                             <div class="notice-box" th:if="${session.loginVO.admin}">
                                 <input type="checkbox" id="notice" th:checked="${view.notice}"><label for="notice">notice</label>
@@ -113,7 +114,7 @@
                 <p>Do you really want to remove this post?</p>
                 <div class="btnbox clearfix">
                     <button type="button" class="cancelbtn" onclick="modal.close('#deleteModal');">Cancel</button>
-                    <button type="button" class="delbtn">Delete</button>
+                    <button type="button" class="post-delbtn">Delete</button>
                 </div>
             </div>
         </div>
@@ -192,7 +193,7 @@
 
         // /* 1. on load */
          /*글삭제*/
-        $(document).on('click','.delbtn',function (){
+        $(document).on('click','.post-delbtn',function (){
             let boardSeq = $('input[name=boardSeq]').val();
             let boardNation =$('#deleteModal').val();
             $.post('/api/setRemoveBoard' , {seq:boardSeq},function (Response) {
@@ -228,11 +229,11 @@
         };
 
         $(function() {
+            $(document).on("contextmenu selectstart dragstart",function(e){return false;});
             /* 2.init*/
             $("input[name=boardSeq]").click(function () {
                 let seq = $('input[name=boardSeq]').val();
                 location.href = "/board/openWrite?seq=" + seq;
-                /* 3. event listener*/
             });
 
             $("#notice").on('click',function(){

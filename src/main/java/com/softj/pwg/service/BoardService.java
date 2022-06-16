@@ -112,7 +112,7 @@ public class BoardService {
                                     ExpressionUtils.as(
                                         JPAExpressions.select(qComent.count())
                                                 .from(qComent)
-                                                .where(qComent.board.eq(qBoard)),"likeCount"))
+                                                .where(qComent.board.eq(qBoard).and(qComent.isDel.eq(false))),"likeCount"))
                                 )
                                 .from(qBoard)
                                 .where(where)
@@ -126,10 +126,39 @@ public class BoardService {
 
     //조회수
     public Board boardView(ParamVO params) { //글 상세 보여주는 메서드
-        Board board = boardRepo.findBySeq(params.getSeq());
+        QBoard qBoard = QBoard.board; //앤티티 가져온거
+        QComent qComent = QComent.coment;
+
+        BooleanBuilder where = new BooleanBuilder(qBoard.seq.eq(params.getSeq()));
+
+        JPAQuery<Board> query = jpaQueryFactory.select(Projections.fields(Board.class,
+                qBoard.seq,
+                qBoard.thumbnail,
+                qBoard.createdAt,
+                qBoard.updatedAt,
+                qBoard.isDel,
+                qBoard.createdId,
+                qBoard.updatedId,
+                qBoard.subject,
+                qBoard.nation,
+                qBoard.content,
+                qBoard.views,
+                qBoard.user,
+                qBoard.isNotice,
+                ExpressionUtils.as(
+                        JPAExpressions.select(qComent.count())
+                                .from(qComent)
+                                .where(qComent.board.eq(qBoard).and(qComent.isDel.eq(false))),"likeCount"))
+        )
+        .from(qBoard)
+        .where(where);
+
+        Board board = query.fetchFirst();
         board.increaseViewCount();
-        return boardRepo.save(board);
+        boardRepo.save(board);
+        return board;
     }
+
     public Page<Coment> boardComent(ParamVO params,Pageable pageable) {
         QComent qComent=QComent.coment;
         QBoard qBoard=QBoard.board;

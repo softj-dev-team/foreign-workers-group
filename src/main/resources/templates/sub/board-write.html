@@ -32,7 +32,7 @@
                 toolbar: [
                     ['insert', ['picture']],
                     ['style', ['bold', 'forecolor', 'fontsize']],
-                    ['insert', ['link', 'file']]
+                    ['insert', ['link']]
                 ],
                 spellCheck: false,
                 placeholder: 'Type...',
@@ -76,6 +76,7 @@
                 }
             });
         }
+
         function myOwnCallBack(file) {
             let data = new FormData();
             data.append("file", file);
