@@ -22,7 +22,7 @@
                         <div class="list-f">
                             <span class="name" th:text="${el.user.nickname}" th:classappend="${#strings.isEmpty(el.user.id) ? '' : 'color-blue'}">name</span>
                             <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(el.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
-                            <span class="view" th:text="${el.views}">121,103</span>
+                            <span th:if="${session.loginVO != null && session.loginVO.admin}" class="view" th:text="${el.views}">121,103</span>
                         </div>
                     </div>
                     <div class="cmt">
@@ -41,7 +41,7 @@
                                 <div class="list-f">
                                     <span class="name" th:text="${el.user.nickname}" th:classappend="${#strings.isEmpty(el.user.id) ? '' : 'color-blue'}">name</span>
                                     <span th:with="tmp='\'T\''" class="time" th:text="${#temporals.format(el.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
-                                    <span class="view" th:text="${el.views}">121,103</span>
+                                    <span th:if="${session.loginVO != null && session.loginVO.admin}" class="view" th:text="${el.views}">121,103</span>
                                 </div>
                         </div>
                     </a>
@@ -60,11 +60,14 @@
         </div>
     </div>
 
-    <script>
-
+    <script th:inline="javascript">
         var isLast = false;
 
         $(function(){
+            /*<![CDATA[*/
+            var loginVO = /*[[${session.loginVO}]]*/ '';
+            /*]]>*/
+
             var page = 0; //0페이지부터
 
             //스크롤 할때 이벤트 감지 게시글을 ajax통해
@@ -97,7 +100,7 @@
                                                             <div class="list-f">
                                                                 <span class="name ${el.user.id ? 'color-blue' : ''}">${el.user.nickname}</span>
                                                                 <span class="time" >${new Date(el.createdAt).format('yyyy-MM-ddTHH:mm:ss')}</span>
-                                                                <span class="view" >${el.views}</span>
+                                                                ${loginVO != null && loginVO.admin ? '<span class="view" >'+el.views+'</span>' : ''}
                                                             </div>
                                                     </div>
                                                 </a>

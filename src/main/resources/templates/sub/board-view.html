@@ -22,7 +22,7 @@
                                 <p class="view-name" th:text="${view.user.nickname}" th:classappend="${#strings.isEmpty(view.user.id) ? '' : 'color-blue'}"></p>
                                 <div class="view-info">
                                     <span class="time-v" th:with="tmp='\'T\''" th:text="${#temporals.format(view.createdAt, 'yyyy-MM-dd &nbsp'+tmp+'HH:mm:ss')}">14:23</span>
-                                    <span class="view-v" th:text="${view.views}"></span>
+                                    <span th:if="${session.loginVO != null && session.loginVO.admin}" class="view-v" th:text="${view.views}"></span>
                                 </div>
                             </div>
                         </div>
@@ -31,7 +31,7 @@
 <!--                                <span id="likeCount" th:text="${likeCount}"></span>-->
                                 <span th:text="${view.likeCount}"></span>
                             </div>
-                            <div class="notice-box" th:if="${session.loginVO.admin}">
+                            <div class="notice-box" th:if="${session.loginVO != null && session.loginVO.admin}">
                                 <input type="checkbox" id="notice" th:checked="${view.notice}"><label for="notice">notice</label>
                             </div>
                             <div class="comment-btn-box">
@@ -46,7 +46,7 @@
                <div class="view-md">
                     <th:block th:utext="${view.content}"></th:block>
                </div>
-               <div class="view-comment">
+               <div class="view-comment" onCopy='javascript:contents_cp();'>
                     <div class="total"><span class="total-font">Comments</span><span class="com-total"></span></div>
                    <form id="form">
                     <div class="comment-box">
@@ -229,7 +229,7 @@
         };
 
         $(function() {
-            $(document).on("contextmenu selectstart dragstart",function(e){return false;});
+            $(".view-md").on("contextmenu selectstart dragstart",function(e){return false;});
             /* 2.init*/
             $("input[name=boardSeq]").click(function () {
                 let seq = $('input[name=boardSeq]').val();
@@ -342,4 +342,12 @@
         }
     </script>
 
+    <script>
+        window.addEventListener('copy', e => {
+            document.execCommand('copy');
+            var retUrl = document.URL;
+            e.preventDefault();
+            e.clipboardData.setData('text/plain', document.getSelection() + "\n\n[Source] " + retUrl);
+        }, false)
+    </script>
 </th:block>

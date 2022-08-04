@@ -22,8 +22,12 @@
             </div>
         </div>
     </div>
-    <script>
+    <script th:inline="javascript">
         $(function(){
+            /*<![CDATA[*/
+            var loginVO = /*[[${session.loginVO}]]*/ '';
+            /*]]>*/
+
             var isLast = false;
             var page = 0; //0페이지부터
             getPage();
@@ -60,7 +64,7 @@
                                         <div class="list-f" >
                                             <span class="name ${el.user.id ? 'color-blue' : ''}">${el.user.nickname}</span>
                                             <span class="time">${new Date(el.createdAt).format('yyyy-MM-dd &nbsp;THH:mm:ss')}</span>
-                                            <span class="view">${el.views}</span>
+                                            ${loginVO != null && loginVO.admin ? '<span class="view" >'+el.views+'</span>' : ''}
                                         </div>
                                     </div>
                                     <div class="cmt">
