@@ -182,7 +182,8 @@
                 //프로필을 가져온다.
                 var profile = googleUser.getBasicProfile();
                 var formData = new FormData();
-                formData.append("id",profile.SW);
+                var googleId = Object.values(profile).find(el => /.+@.+/.test(el));
+                formData.append("id",googleId);
                 formData.append("platform","google");
                 $.ajax({
                     url: '/api/login',
