@@ -80,6 +80,11 @@ public class UserService {
     }
 
     public User setNickName(ParamVO params, MultipartHttpServletRequest request) throws Exception{
+        long seq = ((User)AuthUtil.getAttr("loginVO")).getSeq();
+        if(userRepo.countByNickname(params.getNickname(), seq) > 0) {
+            throw new RuntimeException("Nickname already in use.");
+        }
+
         User user = (User)AuthUtil.getAttr("loginVO");//세션에 저장된 값을 가져옴loginvo
         MultipartFile img = request.getFile("image");
         if(!Objects.isNull(img) && !StringUtils.isEmpty(img.getOriginalFilename())) {

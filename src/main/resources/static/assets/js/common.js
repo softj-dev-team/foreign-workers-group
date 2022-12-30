@@ -1,7 +1,7 @@
 $(function(){
     $(document).ajaxError(function myErrorHandler(event, xhr, ajaxOptions, thrownError) {
         console.log(event, xhr, ajaxOptions, thrownError);
-        modal.alert("Error "+xhr.status);
+        modal.alert(`${xhr.responseJSON.code}<br>${xhr.responseJSON.message}`);
         if(xhr.status == 403){
             ut.redirect('/login');
         }
