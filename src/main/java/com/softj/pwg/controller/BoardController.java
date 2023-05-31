@@ -61,7 +61,7 @@ public class BoardController {
     @GetMapping("/board/list")//보드리스트 세션에 값이 담겨있어야함. 보드리스트에 바로 담겨있질 못하니깐
     public String boardList(ModelMap model, ParamVO params,
                             @PageableDefault(size = 20, sort = "seq", direction = Sort.Direction.DESC) Pageable pageable) throws Exception{ //modelandview랑 같은형식.
-        model.addAttribute("list", boardService.boardList(params,pageable));
+
         model.addAttribute("noticelist", boardService.noticeList(params,pageable));
         model.addAttribute("nationName",AuthUtil.getAttr("nationName"));
 

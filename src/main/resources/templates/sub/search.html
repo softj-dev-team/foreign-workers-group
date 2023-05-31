@@ -38,6 +38,8 @@
         let page = 0;
         let search = '';
         let isLast = true;
+        let requestedPages = []; // 요청한 페이지들
+        let isLoading = false; // 로딩 상태
 
         /* 1. on load */
         $(function(){
@@ -45,8 +47,9 @@
 
             /* 2. event listener*/
             $(window).scroll(function() {
-                if (!isLast && (isBottom())) {
-                    getList()
+                if (!isLast && !isLoading && (isBottom()) && !requestedPages.includes(page)) {
+                    requestedPages.push(page);
+                    getList();
                 }
             });
         })
@@ -70,7 +73,9 @@
         }
 
         function getList(){
+            isLoading = true; // 페이지 데이터 요청 전 로딩상태
             $.post('/api/getPage',{page, search},function(res){
+                isLoading = false; // 요청 성공 후 로딩 상태 끝났음을 알림
                 page++;
                 let cnt = res.data.totalElements;
                 if(cnt == 0){
@@ -83,8 +88,8 @@
                 $('.resultnum').text(cnt);
                 var list = res.data.content;
                 list.forEach(function(el){
-                   var html =
-                   `
+                    var html =
+                        `
                    <div class="list-in clearfix">
                         <div class="list-t">
                             <div class=" clearfix">
