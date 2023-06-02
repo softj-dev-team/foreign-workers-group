@@ -38,7 +38,6 @@
         let page = 0;
         let search = '';
         let isLast = true;
-        let requestedPages = []; // 요청한 페이지들
         let isLoading = false; // 로딩 상태
 
         /* 1. on load */
@@ -47,8 +46,7 @@
 
             /* 2. event listener*/
             $(window).scroll(function() {
-                if (!isLast && !isLoading && (isBottom()) && !requestedPages.includes(page)) {
-                    requestedPages.push(page);
+                if (!isLast && !isLoading && isBottom()) {
                     getList();
                 }
             });
