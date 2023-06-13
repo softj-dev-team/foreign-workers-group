@@ -37,10 +37,12 @@ public class ExceptionHandlingController extends AbstractErrorController {
         // 에러 코드를 획득한다.
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         Exception e = (Exception) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
-        String message = e.getMessage();
+        String message = message = "";
         try{
+            message = e.getMessage();
             message = message.split(":")[1];
         }catch (Exception ex){
+            ex.printStackTrace();
             message = "";
         }
         result.put("message", message);
